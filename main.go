@@ -116,7 +116,17 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 	// set an alias
 	alias := r.FormValue("alias")
 	if alias == "" {
-		alias = b.Config.Alias.Generate()
+		exists := true
+		for exists {
+			alias = b.Config.Alias.Generate()
+			exists, err = b.Config.Storage.Exists(alias)
+
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("error"))
+				return
+			}
+		}
 	} else {
 		exists, err := b.Config.Storage.Exists(alias)
 		if err != nil {
