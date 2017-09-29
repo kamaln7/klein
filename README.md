@@ -2,8 +2,6 @@
   <img src="/klein.png" alt="klein logo" width="386" />
 </p>
 
-klein is a URL shortener. Usage:
-
 ```
 Usage of klein:
   -key string
