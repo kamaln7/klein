@@ -21,7 +21,7 @@ var (
 	path         = flag.String("path", "/srv/www/urls/", "path to urls")
 	listenAddr   = flag.String("listenAddr", "127.0.0.1:5556", "listen address")
 	publicURL    = flag.String("url", "http://127.0.0.1:5556/", "path to public facing url")
-	notFoundPath = flag.String("template", "./404.html", "path to error template")
+	notFoundPath = flag.String("template", "", "path to error template")
 )
 
 func main() {
@@ -29,10 +29,14 @@ func main() {
 
 	logger := log.New(os.Stdout, "[klein] ", log.Ldate|log.Ltime)
 
-	notFoundHTML, err := ioutil.ReadFile(*notFoundPath)
-	if err != nil {
-		logger.Fatal(err)
-		return
+	notFoundHTML := []byte("404 not found")
+	if *notFoundPath != "" {
+		var err error
+		notFoundHTML, err = ioutil.ReadFile(*notFoundPath)
+		if err != nil {
+			logger.Fatal(err)
+			return
+		}
 	}
 
 	var authProvider auth.Provider
