@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/klein.png" alt="klein logo" />
+  <img src="/klein.png" alt="klein logo" width="386" />
 </p>
 
 klein is a URL shortener. Usage:
