@@ -1,4 +1,6 @@
-# klein
+<p align="center">
+  <img src="/klein.png" alt="klein logo" />
+</p>
 
 klein is a URL shortener. Usage:
 
