@@ -22,4 +22,4 @@ Usage of klein:
     	path to public facing url (default "http://127.0.0.1:5556/")
 ```
 
-The only _absolutely_ necessary options are `template`, `path`, and `url`.
+The only absolutely necessary option is "path". You might want to adjust the URL though.
