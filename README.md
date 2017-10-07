@@ -9,10 +9,10 @@ klein is a minimalist URL shortener written in Go. No unnecessary clutter, web U
 klein has three core components that are abstracted into "modules" to allow different functionality:
 
 1. auth
-  * Handles authentication, gaurding access to shortening links
-  * Comes with two modules:
-    * Unauthenticated—shorten URLs without authentication
-    * Static Key—require a static key/password
+   * Handles authentication, gaurding access to shortening links
+   * Comes with two modules:
+     * Unauthenticated—shorten URLs without authentication
+     * Static Key—require a static key/password
 2. alias
    * Handles generating URL aliases.
    * Comes with one module:
@@ -29,24 +29,6 @@ Grab the latest binary from [the releases page](https://github.com/kamaln7/klein
 ### Configuration
 
 klein uses CLI options for config.
-
-```
-  -key string
-    	upload API Key
-  -length int
-    	code length (default 3)
-  -listenAddr string
-    	listen address (default "127.0.0.1:5556")
-  -path string
-    	path to urls (default "/srv/www/urls/")
-  -root string
-    	root redirect
-  -template string
-    	path to error template
-  -url string
-    	path to public facing url (default "http://127.0.0.1:5556/")
-```
-
 
 
 | option               | description                              | default                  |
@@ -91,6 +73,7 @@ Once installed and configured, there are two actions that you can do:
    * Send a POST request to `/` with the following two fields:
      1. `url`—the URL to shorten
      2. `key`—if the Static Key auth module is enabled
+   * Example cURL command: `curl -X POST -d 'url=http://github.com/kamaln7/klein' -d 'key=secret_password' http://localhost:5556/`
 2. Look up a URL/serve a redirect:
    * Browse to `http://[path to klein]/[alias]` to access a short URL.
 
