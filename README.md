@@ -73,7 +73,9 @@ Once installed and configured, there are two actions that you can do:
    * Send a POST request to `/` with the following two fields:
      1. `url`—the URL to shorten
      2. `key`—if the Static Key auth module is enabled
-   * Example cURL command: `curl -X POST -d 'url=http://github.com/kamaln7/klein' -d 'key=secret_password' http://localhost:5556/`
+     3. `alias`—a custom alias to be used instead of a randomly-generated one
+   * Example cURL command: `curl -X POST -d 'url=http://github.com/kamaln7/klein' -d 'key=secret_password' -d 'alias=klein_gh' http://localhost:5556/`
+     * This will create a short URL at `http://localhost:5556/klein_gh` that redirects to `http://github.com/kamaln7/klein`.
 2. Look up a URL/serve a redirect:
    * Browse to `http://[path to klein]/[alias]` to access a short URL.
 
