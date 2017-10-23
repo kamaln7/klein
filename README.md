@@ -19,8 +19,9 @@ klein has three core components that are abstracted into "modules" to allow diff
      * Alphanumeric—returns a random alphanumeric string with a configurable length
 3. storage
    * Handles storing and reading shortened URLs.
-   * Comes with one module:
+   * Comes with two modules:
      * File—stores URL data as text files in a directory
+     * Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
 
 ## Installation
 
@@ -36,10 +37,13 @@ klein uses CLI options for config.
 | `-key string`        | `key` for the Static Key auth module. Uses Unauthe if left blank. |                          |
 | `-length int`        | Alias length for the Alphanumeric alias module. | `3`                      |
 | `-listenAddr string` | The network address to listen on.        | `127.0.0.1:5556`         |
-| `-path string`       | Path to the storage directory for the File storage module. |                          |
+| `-file.path string`       | Path to the storage directory for the File storage module. |                          |
+| `-bolt.path string`       | Path to the bolt database for the Bolt storage module. |                          |
 | `-root string`       | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank. |                          |
 | `-template string`   | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                          |
 | `-url string`        | Base URL to the hosted instance of the klein. | `http://127.0.0.1:5556/` |
+
+The only required options are `file.path` and `bolt.path`. You may only use one storage module at a time.
 
 
 ### Service file
