@@ -15,8 +15,9 @@ klein has three core components that are abstracted into "modules" to allow diff
      * Static Key—require a static key/password
 2. alias
    * Handles generating URL aliases.
-   * Comes with one module:
+   * Comes with two modules:
      * Alphanumeric—returns a random alphanumeric string with a configurable length
+     * Memorable-returns a configurable amount of English words
 3. storage
    * Handles storing and reading shortened URLs.
    * Comes with two modules:
@@ -35,7 +36,8 @@ klein uses CLI options for config.
 | option               | description                              | default                  |
 | -------------------- | ---------------------------------------- | ------------------------ |
 | `-key string`        | `key` for the Static Key auth module. Uses Unauthe if left blank. |                          |
-| `-length int`        | Alias length for the Alphanumeric alias module. | `3`                      |
+| `-alphanumeric.length int`        | Alias length for the Alphanumeric alias module. |                          |
+| `-memorable.length int`        | Alias length for the Memorable alias module. |                          |
 | `-listenAddr string` | The network address to listen on.        | `127.0.0.1:5556`         |
 | `-file.path string`       | Path to the storage directory for the File storage module. |                          |
 | `-bolt.path string`       | Path to the bolt database for the Bolt storage module. |                          |
@@ -43,8 +45,7 @@ klein uses CLI options for config.
 | `-template string`   | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                          |
 | `-url string`        | Base URL to the hosted instance of the klein. | `http://127.0.0.1:5556/` |
 
-The only required options are `file.path` and `bolt.path`. You may only use one storage module at a time.
-
+You must specify one storage provider (`file.path`/`bolt.path`) and one alias provider (`alphanumeric.length`/`memorable.length`).
 
 ### Service file
 

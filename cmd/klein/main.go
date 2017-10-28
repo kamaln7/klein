@@ -6,8 +6,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/kamaln7/klein/alias"
+
 	"github.com/kamaln7/klein"
 	"github.com/kamaln7/klein/alias/alphanumeric"
+	"github.com/kamaln7/klein/alias/memorable"
 	"github.com/kamaln7/klein/auth"
 	"github.com/kamaln7/klein/auth/statickey"
 	"github.com/kamaln7/klein/auth/unauthenticated"
@@ -17,14 +20,15 @@ import (
 )
 
 var (
-	length       = flag.Int("length", 3, "code length")
-	key          = flag.String("key", "", "upload API Key")
-	root         = flag.String("root", "", "root redirect")
-	filepath     = flag.String("file.path", "", "path to urls")
-	boltpath     = flag.String("bolt.path", "", "path to bolt db file")
-	listenAddr   = flag.String("listenAddr", "127.0.0.1:5556", "listen address")
-	publicURL    = flag.String("url", "http://127.0.0.1:5556/", "path to public facing url")
-	notFoundPath = flag.String("template", "", "path to error template")
+	alphanumericlength = flag.Int("alphanumeric.length", -1, "alphanumeric code length")
+	memorablelength    = flag.Int("memorable.length", -1, "memorable word count")
+	key                = flag.String("key", "", "upload API Key")
+	root               = flag.String("root", "", "root redirect")
+	filepath           = flag.String("file.path", "", "path to urls")
+	boltpath           = flag.String("bolt.path", "", "path to bolt db file")
+	listenAddr         = flag.String("listenAddr", "127.0.0.1:5556", "listen address")
+	publicURL          = flag.String("url", "http://127.0.0.1:5556/", "path to public facing url")
+	notFoundPath       = flag.String("template", "", "path to error template")
 )
 
 func main() {
@@ -34,6 +38,10 @@ func main() {
 
 	if *filepath != "" && *boltpath != "" {
 		logger.Fatalln("cannot use both file-based and boltdb-based storage")
+	}
+
+	if *alphanumericlength != -1 && *memorablelength != -1 {
+		logger.Fatalln("cannot use both alphanumeric and memorable alias providers")
 	}
 
 	notFoundHTML := []byte("404 not found")
@@ -46,6 +54,8 @@ func main() {
 		}
 	}
 
+	// auth
+
 	var authProvider auth.Provider
 	if *key == "" {
 		authProvider = unauthenticated.New()
@@ -54,6 +64,8 @@ func main() {
 			Key: *key,
 		})
 	}
+
+	// storage
 
 	var storage storage.Provider
 	switch {
@@ -74,10 +86,26 @@ func main() {
 		logger.Fatalln("please pass one storage engine")
 	}
 
+	// alias
+
+	var aliasProvider alias.Provider
+	switch {
+	case *alphanumericlength != -1:
+		aliasProvider = alphanumeric.New(&alphanumeric.Config{
+			Length: *alphanumericlength,
+		})
+	case *memorablelength != -1:
+		aliasProvider = memorable.New(&memorable.Config{
+			Length: *memorablelength,
+		})
+	default:
+		logger.Fatalln("please pass one alias provider")
+	}
+
+	// klein
+
 	k := klein.New(&klein.Config{
-		Alias: alphanumeric.New(&alphanumeric.Config{
-			Length: *length,
-		}),
+		Alias:   aliasProvider,
 		Auth:    authProvider,
 		Storage: storage,
 		Log:     logger,
