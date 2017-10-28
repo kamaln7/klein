@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,7 +28,7 @@ var (
 	filepath           = flag.String("file.path", "", "path to urls")
 	boltpath           = flag.String("bolt.path", "", "path to bolt db file")
 	listenAddr         = flag.String("listenAddr", "127.0.0.1:5556", "listen address")
-	publicURL          = flag.String("url", "http://127.0.0.1:5556/", "path to public facing url")
+	publicURL          = flag.String("url", "", "path to public facing url")
 	notFoundPath       = flag.String("template", "", "path to error template")
 )
 
@@ -125,6 +126,12 @@ func main() {
 		aliasProvider = memorable.New(&memorable.Config{
 			Length: *memorablelength,
 		})
+	}
+
+	// url
+
+	if *publicURL == "" {
+		*publicURL = fmt.Sprintf("http://%s/", *listenAddr)
 	}
 
 	// klein

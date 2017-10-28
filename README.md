@@ -43,7 +43,7 @@ klein uses CLI options for config.
 | `-bolt.path string`       | Path to the bolt database for the Bolt storage module. |                          |
 | `-root string`       | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank. |                          |
 | `-template string`   | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                          |
-| `-url string`        | Base URL to the hosted instance of the klein. | `http://127.0.0.1:5556/` |
+| `-url string`        | Base URL to the hosted instance of the klein. | `http://listenAddr/` |
 
 You must specify one storage provider (`file.path`/`bolt.path`) and one alias provider (`alphanumeric.length`/`memorable.length`).
 
