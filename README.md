@@ -17,12 +17,13 @@ klein has three core components that are abstracted into "modules" to allow diff
    * Handles generating URL aliases.
    * Comes with two modules:
      * Alphanumeric—returns a random alphanumeric string with a configurable length
-     * Memorable-returns a configurable amount of English words
+     * Memorable—returns a configurable amount of English words
 3. storage
    * Handles storing and reading shortened URLs.
-   * Comes with two modules:
+   * Comes with three modules:
      * File—stores URL data as text files in a directory
      * Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
+     * Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
 
 ## Installation
 
@@ -41,11 +42,14 @@ klein uses CLI options for config.
 | `-listenAddr string` | The network address to listen on.        | `127.0.0.1:5556`         |
 | `-file.path string`       | Path to the storage directory for the File storage module. |                          |
 | `-bolt.path string`       | Path to the bolt database for the Bolt storage module. |                          |
+| `-redis.address string`       | Address:Port for the Redis storage module. |                          |
+| `-redis.auth string`       | Authentication string for the Redis storage module. |                          |
+| `-redis.db int`       | Database ID for the Redis storage module. | `0` |
 | `-root string`       | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank. |                          |
 | `-template string`   | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                          |
 | `-url string`        | Base URL to the hosted instance of the klein. | `http://listenAddr/` |
 
-You must specify one storage provider (`file.path`/`bolt.path`) and one alias provider (`alphanumeric.length`/`memorable.length`).
+You must specify one storage provider (`file.path`/`bolt.path`/`redis.address`) and one alias provider (`alphanumeric.length`/`memorable.length`).
 
 ### Service file
 
