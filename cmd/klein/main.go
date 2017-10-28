@@ -31,18 +31,47 @@ var (
 	notFoundPath       = flag.String("template", "", "path to error template")
 )
 
+func exclusiveFlag(cb func(v ...interface{}), collisionErr, missingErr string, defaultVal interface{}, flags ...interface{}) {
+	found := false
+	for _, flag := range flags {
+		if flag == defaultVal {
+			continue
+		}
+
+		if found == true {
+			cb(collisionErr)
+		}
+
+		found = true
+	}
+
+	if found == false {
+		cb(missingErr)
+	}
+}
+
 func main() {
 	flag.Parse()
 
 	logger := log.New(os.Stdout, "[klein] ", log.Ldate|log.Ltime)
 
-	if *filepath != "" && *boltpath != "" {
-		logger.Fatalln("cannot use both file-based and boltdb-based storage")
-	}
+	// exclusive flags
+	exclusiveFlag(
+		logger.Fatalln,
+		"cannot use both file-based and boltdb-based storage",
+		"please pass one storage provider",
+		"",
+		*filepath, *boltpath,
+	)
+	exclusiveFlag(
+		logger.Fatalln,
+		"cannot use both alphanumeric and memorable alias providers",
+		"please pass one alias provider",
+		-1,
+		*alphanumericlength, *memorablelength,
+	)
 
-	if *alphanumericlength != -1 && *memorablelength != -1 {
-		logger.Fatalln("cannot use both alphanumeric and memorable alias providers")
-	}
+	// 404
 
 	notFoundHTML := []byte("404 not found")
 	if *notFoundPath != "" {
@@ -82,8 +111,6 @@ func main() {
 		if err != nil {
 			logger.Fatalf("could not open bolt database: %s\n", err.Error())
 		}
-	default:
-		logger.Fatalln("please pass one storage engine")
 	}
 
 	// alias
@@ -98,8 +125,6 @@ func main() {
 		aliasProvider = memorable.New(&memorable.Config{
 			Length: *memorablelength,
 		})
-	default:
-		logger.Fatalln("please pass one alias provider")
 	}
 
 	// klein
