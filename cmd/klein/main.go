@@ -67,15 +67,15 @@ func main() {
 
 	// storage
 
-	var storage storage.Provider
+	var storageProvider storage.Provider
 	switch {
 	case *filepath != "":
-		storage = file.New(&file.Config{
+		storageProvider = file.New(&file.Config{
 			Path: *filepath,
 		})
 	case *boltpath != "":
 		var err error
-		storage, err = bolt.New(&bolt.Config{
+		storageProvider, err = bolt.New(&bolt.Config{
 			Path: *boltpath,
 		})
 
@@ -107,7 +107,7 @@ func main() {
 	k := klein.New(&klein.Config{
 		Alias:   aliasProvider,
 		Auth:    authProvider,
-		Storage: storage,
+		Storage: storageProvider,
 		Log:     logger,
 
 		ListenAddr:   *listenAddr,
