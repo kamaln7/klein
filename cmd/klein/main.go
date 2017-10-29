@@ -22,7 +22,9 @@ import (
 )
 
 var (
-	alphanumericlength = flag.Int("alphanumeric.length", -1, "alphanumeric code length")
+	alphanumericLength = flag.Int("alphanumeric.length", -1, "alphanumeric code length")
+	alphanumericAlpha  = flag.Bool("alphanumeric.alpha", true, "use letters in code")
+	alphanumericNum    = flag.Bool("alphanumeric.num", true, "use numbers in code")
 	memorablelength    = flag.Int("memorable.length", -1, "memorable word count")
 	key                = flag.String("key", "", "upload API Key")
 	root               = flag.String("root", "", "root redirect")
@@ -73,7 +75,7 @@ func main() {
 		"cannot use both alphanumeric and memorable alias providers",
 		"please pass one alias provider",
 		-1,
-		*alphanumericlength, *memorablelength,
+		*alphanumericLength, *memorablelength,
 	)
 
 	// 404
@@ -133,10 +135,17 @@ func main() {
 
 	var aliasProvider alias.Provider
 	switch {
-	case *alphanumericlength != -1:
-		aliasProvider = alphanumeric.New(&alphanumeric.Config{
-			Length: *alphanumericlength,
+	case *alphanumericLength != -1:
+		var err error
+		aliasProvider, err = alphanumeric.New(&alphanumeric.Config{
+			Length: *alphanumericLength,
+			Alpha:  *alphanumericAlpha,
+			Num:    *alphanumericNum,
 		})
+
+		if err != nil {
+			logger.Fatalf("could not select alphanumeric alias: %s\n", err.Error())
+		}
 	case *memorablelength != -1:
 		aliasProvider = memorable.New(&memorable.Config{
 			Length: *memorablelength,
