@@ -16,10 +16,10 @@ type Provider struct {
 
 // Config contains the configuration for the redis storage
 type Config struct {
-	Address  string
-	Auth     string
-	DB       int
-	Alias    alias.Provider
+	Address string
+	Auth    string
+	DB      int
+	Alias   alias.Provider
 }
 
 // ensure that the storage.Provider interface is implemented
@@ -40,60 +40,60 @@ func New(c *Config) (*Provider, error) {
 
 // Init sets up the Redis pool
 func (p *Provider) Init() error {
-  df := func(network, addr string) (*redis.Client, error) {
-  	client, err := redis.Dial(network, addr)
-  	if err != nil {
-  		return nil, err
-  	}
+	df := func(network, addr string) (*redis.Client, error) {
+		client, err := redis.Dial(network, addr)
+		if err != nil {
+			return nil, err
+		}
 
-    if p.Config.Auth != "" {
-    	if err = client.Cmd("AUTH", p.Config.Auth).Err; err != nil {
-    		client.Close()
-    		return nil, err
-    	}
-    }
+		if p.Config.Auth != "" {
+			if err = client.Cmd("AUTH", p.Config.Auth).Err; err != nil {
+				client.Close()
+				return nil, err
+			}
+		}
 
-  	if err = client.Cmd("SELECT", p.Config.DB).Err; err != nil {
-  		client.Close()
-  		return nil, err
-  	}
+		if err = client.Cmd("SELECT", p.Config.DB).Err; err != nil {
+			client.Close()
+			return nil, err
+		}
 
-  	return client, nil
-  }
+		return client, nil
+	}
 
-  pool, err := pool.NewCustom("tcp", p.Config.Address, 10, df)
-  if err != nil {
-  	return err
-  }
+	pool, err := pool.NewCustom("tcp", p.Config.Address, 10, df)
+	if err != nil {
+		return err
+	}
 
-  p.pool = pool
+	p.pool = pool
 	return nil
 }
 
 // Get attempts to find a URL by its alias and returns its original URL
 func (p *Provider) Get(alias string) (string, error) {
-  r := p.pool.Cmd("GET", alias)
-  if r.Err != nil {
-  	return "", r.Err
-  }
+	r := p.pool.Cmd("GET", alias)
+	if r.Err != nil {
+		return "", r.Err
+	}
 
-  return r.Str()
+	return r.Str()
 }
 
 // Exists checks if there is a URL with the requested alias
 func (p *Provider) Exists(alias string) (bool, error) {
-  r, err := p.pool.Cmd("EXISTS", alias).Int()
-  if err != nil {
-  	return false, err
-  } else if r == 1 {
-    return true, nil
-  }
+	r, err := p.pool.Cmd("EXISTS", alias).Int()
+	if err != nil {
+		return false, err
+	} else if r == 1 {
+		return true, nil
+	}
 
-  return false, nil
+	return false, nil
 }
 
 // Store creates a new short URL
 func (p *Provider) Store(url, alias string) error {
-  r := p.pool.Cmd("SET", alias, url)
-  return r.Err
+	r := p.pool.Cmd("SET", alias, url)
+	return r.Err
 }
