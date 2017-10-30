@@ -34,20 +34,22 @@ Grab the latest binary from [the releases page](https://github.com/kamaln7/klein
 klein uses CLI options for config.
 
 
-| option               | description                              | default                  |
-| -------------------- | ---------------------------------------- | ------------------------ |
-| `-key string`        | `key` for the Static Key auth module. Uses Unauthe if left blank. |                          |
-| `-alphanumeric.length int`        | Alias length for the Alphanumeric alias module. |                          |
-| `-memorable.length int`        | Alias length for the Memorable alias module. |                          |
-| `-listenAddr string` | The network address to listen on.        | `127.0.0.1:5556`         |
-| `-file.path string`       | Path to the storage directory for the File storage module. |                          |
-| `-bolt.path string`       | Path to the bolt database for the Bolt storage module. |                          |
-| `-redis.address string`       | Address:Port for the Redis storage module. |                          |
-| `-redis.auth string`       | Authentication string for the Redis storage module. |                          |
-| `-redis.db int`       | Database ID for the Redis storage module. | `0` |
-| `-root string`       | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank. |                          |
-| `-template string`   | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                          |
-| `-url string`        | Base URL to the hosted instance of the klein. | `http://listenAddr/` |
+| option                     | description                                                                                                  | default              |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------- |
+| `-key string`              | `key` for the Static Key auth module. Uses Unauthe if left blank.                                            |                      |
+| `-alphanumeric.length int` | Alias length for the Alphanumeric alias module.                                                              |                      |
+| `-alphanumeric.alpha bool` | Include English alphabet characters in the Alphanumeric module aliases.                                      | `true`               |
+| `-alphanumeric.num bool`   | Include numbers in the Alphanumeric module aliases.                                                          | `true`               |
+| `-memorable.length int`    | Alias length for the Memorable alias module.                                                                 |                      |
+| `-listenAddr string`       | The network address to listen on.                                                                            | `127.0.0.1:5556`     |
+| `-file.path string`        | Path to the storage directory for the File storage module.                                                   |                      |
+| `-bolt.path string`        | Path to the bolt database for the Bolt storage module.                                                       |                      |
+| `-redis.address string`    | Address:Port for the Redis storage module.                                                                   |                      |
+| `-redis.auth string`       | Authentication string for the Redis storage module.                                                          |                      |
+| `-redis.db int`            | Database ID for the Redis storage module.                                                                    | `0`                  |
+| `-root string`             | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank.         |                      |
+| `-template string`         | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                      |
+| `-url string`              | Base URL to the hosted instance of the klein.                                                                | `http://listenAddr/` |
 
 You must specify one storage provider (`file.path`/`bolt.path`/`redis.address`) and one alias provider (`alphanumeric.length`/`memorable.length`).
 
