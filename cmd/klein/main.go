@@ -19,10 +19,13 @@ import (
 	"github.com/kamaln7/klein/storage"
 	"github.com/kamaln7/klein/storage/bolt"
 	"github.com/kamaln7/klein/storage/file"
+	"github.com/kamaln7/klein/storage/redis"
 )
 
 var (
-	alphanumericlength = flag.Int("alphanumeric.length", -1, "alphanumeric code length")
+	alphanumericLength = flag.Int("alphanumeric.length", -1, "alphanumeric code length")
+	alphanumericAlpha  = flag.Bool("alphanumeric.alpha", true, "use letters in code")
+	alphanumericNum    = flag.Bool("alphanumeric.num", true, "use numbers in code")
 	memorablelength    = flag.Int("memorable.length", -1, "memorable word count")
 	authkey            = flag.String("auth.key", "", "upload API Key")
 	authusername       = flag.String("auth.username", "", "username for HTTP basic auth")
@@ -30,6 +33,9 @@ var (
 	root               = flag.String("root", "", "root redirect")
 	filepath           = flag.String("file.path", "", "path to urls")
 	boltpath           = flag.String("bolt.path", "", "path to bolt db file")
+	redisaddress       = flag.String("redis.address", "", "address:port of redis instance")
+	redisauth          = flag.String("redis.auth", "", "password to access redis")
+	redisdb            = flag.Int("redis.db", 0, "db to select within redis")
 	listenAddr         = flag.String("listenAddr", "127.0.0.1:5556", "listen address")
 	publicURL          = flag.String("url", "", "path to public facing url")
 	notFoundPath       = flag.String("template", "", "path to error template")
@@ -66,7 +72,7 @@ func main() {
 		"please pass one storage provider",
 		"",
 		true,
-		*filepath, *boltpath,
+		*filepath, *boltpath, *redisaddress,
 	)
 	exclusiveFlag(
 		logger.Fatalln,
@@ -74,7 +80,7 @@ func main() {
 		"please pass one alias provider",
 		-1,
 		true,
-		*alphanumericlength, *memorablelength,
+		*alphanumericLength, *memorablelength,
 	)
 	exclusiveFlag(
 		logger.Fatalln,
@@ -130,16 +136,34 @@ func main() {
 		if err != nil {
 			logger.Fatalf("could not open bolt database: %s\n", err.Error())
 		}
+	case *redisaddress != "":
+		var err error
+		storageProvider, err = redis.New(&redis.Config{
+			Address: *redisaddress,
+			Auth:    *redisauth,
+			DB:      *redisdb,
+		})
+
+		if err != nil {
+			logger.Fatalf("could not open redis database: %s\n", err.Error())
+		}
 	}
 
 	// alias
 
 	var aliasProvider alias.Provider
 	switch {
-	case *alphanumericlength != -1:
-		aliasProvider = alphanumeric.New(&alphanumeric.Config{
-			Length: *alphanumericlength,
+	case *alphanumericLength != -1:
+		var err error
+		aliasProvider, err = alphanumeric.New(&alphanumeric.Config{
+			Length: *alphanumericLength,
+			Alpha:  *alphanumericAlpha,
+			Num:    *alphanumericNum,
 		})
+
+		if err != nil {
+			logger.Fatalf("could not select alphanumeric alias: %s\n", err.Error())
+		}
 	case *memorablelength != -1:
 		aliasProvider = memorable.New(&memorable.Config{
 			Length: *memorablelength,
