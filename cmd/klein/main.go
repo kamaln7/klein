@@ -13,6 +13,7 @@ import (
 	"github.com/kamaln7/klein/alias/alphanumeric"
 	"github.com/kamaln7/klein/alias/memorable"
 	"github.com/kamaln7/klein/auth"
+	"github.com/kamaln7/klein/auth/httpbasic"
 	"github.com/kamaln7/klein/auth/statickey"
 	"github.com/kamaln7/klein/auth/unauthenticated"
 	"github.com/kamaln7/klein/storage"
@@ -26,7 +27,9 @@ var (
 	alphanumericAlpha  = flag.Bool("alphanumeric.alpha", true, "use letters in code")
 	alphanumericNum    = flag.Bool("alphanumeric.num", true, "use numbers in code")
 	memorablelength    = flag.Int("memorable.length", -1, "memorable word count")
-	key                = flag.String("key", "", "upload API Key")
+	authkey            = flag.String("auth.key", "", "upload API Key")
+	authusername       = flag.String("auth.username", "", "username for HTTP basic auth")
+	authpassword       = flag.String("auth.password", "", "password for HTTP basic auth")
 	root               = flag.String("root", "", "root redirect")
 	filepath           = flag.String("file.path", "", "path to urls")
 	boltpath           = flag.String("bolt.path", "", "path to bolt db file")
@@ -38,7 +41,7 @@ var (
 	notFoundPath       = flag.String("template", "", "path to error template")
 )
 
-func exclusiveFlag(cb func(v ...interface{}), collisionErr, missingErr string, defaultVal interface{}, flags ...interface{}) {
+func exclusiveFlag(cb func(v ...interface{}), collisionErr, missingErr string, defaultVal interface{}, required bool, flags ...interface{}) {
 	found := false
 	for _, flag := range flags {
 		if flag == defaultVal {
@@ -52,7 +55,7 @@ func exclusiveFlag(cb func(v ...interface{}), collisionErr, missingErr string, d
 		found = true
 	}
 
-	if found == false {
+	if found == false && required {
 		cb(missingErr)
 	}
 }
@@ -68,6 +71,7 @@ func main() {
 		"cannot use both file-based and boltdb-based storage",
 		"please pass one storage provider",
 		"",
+		true,
 		*filepath, *boltpath, *redisaddress,
 	)
 	exclusiveFlag(
@@ -75,7 +79,16 @@ func main() {
 		"cannot use both alphanumeric and memorable alias providers",
 		"please pass one alias provider",
 		-1,
+		true,
 		*alphanumericLength, *memorablelength,
+	)
+	exclusiveFlag(
+		logger.Fatalln,
+		"cannot use both static key based auth and http basic auth",
+		"please pass one auth provider",
+		"",
+		false,
+		*authkey, *authusername,
 	)
 
 	// 404
@@ -93,12 +106,17 @@ func main() {
 	// auth
 
 	var authProvider auth.Provider
-	if *key == "" {
-		authProvider = unauthenticated.New()
-	} else {
+	if *authkey != "" {
 		authProvider = statickey.New(&statickey.Config{
-			Key: *key,
+			Key: *authkey,
 		})
+	} else if *authusername != "" {
+		authProvider = httpbasic.New(&httpbasic.Config{
+			Username: *authusername,
+			Password: *authpassword,
+		})
+	} else {
+		authProvider = unauthenticated.New()
 	}
 
 	// storage
