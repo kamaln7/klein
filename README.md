@@ -13,6 +13,7 @@ klein has three core components that are abstracted into "modules" to allow diff
    * Comes with two modules:
      * Unauthenticated—shorten URLs without authentication
      * Static Key—require a static key/password
+     * HTTP Basic—uses HTTP Basic Auth, require a username and password
 2. alias
    * Handles generating URL aliases.
    * Comes with two modules:
