@@ -35,8 +35,11 @@ klein uses CLI options for config.
 
 | option               | description                              | default                  |
 | -------------------- | ---------------------------------------- | ------------------------ |
-| `-key string`        | `key` for the Static Key auth module. Uses Unauthe if left blank. |                          |
+
 | `-alphanumeric.length int`        | Alias length for the Alphanumeric alias module. |                          |
+| `-auth.key string`        | `key` for the Static Key auth module. |                          |
+| `-auth.username string`        | Username for the HTTP Basic Auth auth module. |                          |
+| `-auth.password string`        | Password for the HTTP Basic Auth auth module. |                          |
 | `-memorable.length int`        | Alias length for the Memorable alias module. |                          |
 | `-listenAddr string` | The network address to listen on.        | `127.0.0.1:5556`         |
 | `-file.path string`       | Path to the storage directory for the File storage module. |                          |
@@ -46,6 +49,8 @@ klein uses CLI options for config.
 | `-url string`        | Base URL to the hosted instance of the klein. | `http://listenAddr/` |
 
 You must specify one storage provider (`file.path`/`bolt.path`) and one alias provider (`alphanumeric.length`/`memorable.length`).
+
+If none of `auth.key`, `auth.username`, and `auth.password` are provided, the server is run without authentication.
 
 ### Service file
 
