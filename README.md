@@ -26,6 +26,20 @@ klein has three core components that are abstracted into "modules" to allow diff
      * Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
      * Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
 
+## Usage
+
+Once installed and configured, there are two actions that you can do:
+
+1. Shorten a URL:
+   * Send a POST request to `/` with the following two fields:
+     1. `url`—the URL to shorten
+     2. `key`—if the Static Key auth module is enabled
+     3. `alias`—a custom alias to be used instead of a randomly-generated one
+   * Example cURL command: `curl -X POST -d 'url=http://github.com/kamaln7/klein' -d 'key=secret_password' -d 'alias=klein_gh' http://localhost:5556/`
+     * This will create a short URL at `http://localhost:5556/klein_gh` that redirects to `http://github.com/kamaln7/klein`.
+2. Look up a URL/serve a redirect:
+   * Browse to `http://[path to klein]/[alias]` to access a short URL.
+
 ## Installation
 
 Grab the latest binary from [the releases page](https://github.com/kamaln7/klein/releases) and drop it in `/usr/local/bin`, `/opt`, or wherever you like.
@@ -79,20 +93,6 @@ WantedBy=multi-user.target
 ```
 
 Don't forget to add your config to the `ExecStart` line and update `User` and `Group` if necessary. Make sure that klein has permission to write to the URLs directory.
-
-## Usage
-
-Once installed and configured, there are two actions that you can do:
-
-1. Shorten a URL:
-   * Send a POST request to `/` with the following two fields:
-     1. `url`—the URL to shorten
-     2. `key`—if the Static Key auth module is enabled
-     3. `alias`—a custom alias to be used instead of a randomly-generated one
-   * Example cURL command: `curl -X POST -d 'url=http://github.com/kamaln7/klein' -d 'key=secret_password' -d 'alias=klein_gh' http://localhost:5556/`
-     * This will create a short URL at `http://localhost:5556/klein_gh` that redirects to `http://github.com/kamaln7/klein`.
-2. Look up a URL/serve a redirect:
-   * Browse to `http://[path to klein]/[alias]` to access a short URL.
 
 ## License
 
