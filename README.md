@@ -9,7 +9,7 @@ klein is a minimalist URL shortener written in Go. No unnecessary clutter, web U
 klein has three core components that are abstracted into "modules" to allow different functionality:
 
 1. auth
-   * Handles authentication, gaurding access to shortening links
+   * Handles authentication, guarding access to shortening links
    * Comes with two modules:
      * Unauthenticated—shorten URLs without authentication
      * Static Key—require a static key/password
