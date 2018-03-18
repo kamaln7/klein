@@ -9,6 +9,8 @@ RUN go install
 
 # Copy go binary and static assets
 FROM alpine:3.7
+# Add ca-certificates so that we can talk to DigitalOcean Spaces
+RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
 COPY --from=builder /go/bin/klein .
