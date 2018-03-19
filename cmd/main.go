@@ -19,6 +19,7 @@ import (
 	"github.com/kamaln7/klein/storage/bolt"
 	"github.com/kamaln7/klein/storage/file"
 	"github.com/kamaln7/klein/storage/redis"
+	"github.com/kamaln7/klein/storage/spaces"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -97,12 +98,33 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not open redis database: %s\n", err.Error())
 			}
+		case "spaces":
+			accessKey := viper.GetString("storage.spaces.access_key")
+			secretKey := viper.GetString("storage.spaces.secret_key")
+			region := viper.GetString("storage.spaces.region")
+			space := viper.GetString("storage.spaces.space")
+
+			if accessKey == "" || secretKey == "" || region == "" || space == "" {
+				logger.Fatalf("You need to provide an access key, secret key, region and space to use the spaces storage backend")
+			}
+
+			var err error
+			storageProvider, err = spaces.New(&spaces.Config{
+				AccessKey: accessKey,
+				SecretKey: secretKey,
+				Region:    region,
+				Space:     space,
+				Path:      viper.GetString("storage.spaces.path"),
+			})
+
+			if err != nil {
+				logger.Fatalf("could not connect to spaces: %s\n", err.Error())
+			}
 		default:
 			logger.Fatal("Invalid storage backend")
 		}
 
 		// alias
-
 		var aliasProvider alias.Provider
 		switch viper.GetString("alias") {
 		case "alphanumeric":
@@ -131,7 +153,6 @@ var rootCmd = &cobra.Command{
 		}
 
 		// klein
-
 		k := server.New(&server.Config{
 			Alias:   aliasProvider,
 			Auth:    authProvider,
@@ -194,7 +215,7 @@ func init() {
 	viper.BindPFlag("auth.basic.password", rootCmd.PersistentFlags().Lookup("auth.basic.password"))
 
 	// Storage options
-	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis)")
+	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces)")
 	viper.BindPFlag("storage", rootCmd.PersistentFlags().Lookup("storage"))
 
 	rootCmd.PersistentFlags().String("storage.file.path", "urls", "path to use for file store")
@@ -211,6 +232,21 @@ func init() {
 
 	rootCmd.PersistentFlags().Int("storage.redis.db", 0, "db to select within redis")
 	viper.BindPFlag("storage.redis.db", rootCmd.PersistentFlags().Lookup("storage.redis.db"))
+
+	rootCmd.PersistentFlags().String("storage.spaces.access_key", "", "access key for spaces")
+	viper.BindPFlag("storage.spaces.access_key", rootCmd.PersistentFlags().Lookup("storage.spaces.access_key"))
+
+	rootCmd.PersistentFlags().String("storage.spaces.secret_key", "", "secret key for spaces")
+	viper.BindPFlag("storage.spaces.secret_key", rootCmd.PersistentFlags().Lookup("storage.spaces.secret_key"))
+
+	rootCmd.PersistentFlags().String("storage.spaces.region", "", "region for spaces")
+	viper.BindPFlag("storage.spaces.region", rootCmd.PersistentFlags().Lookup("storage.spaces.region"))
+
+	rootCmd.PersistentFlags().String("storage.spaces.space", "", "space to use")
+	viper.BindPFlag("storage.spaces.space", rootCmd.PersistentFlags().Lookup("storage.spaces.space"))
+
+	rootCmd.PersistentFlags().String("storage.spaces.path", "klein.json", "path of the file in spaces")
+	viper.BindPFlag("storage.spaces.path", rootCmd.PersistentFlags().Lookup("storage.spaces.path"))
 }
 
 func initConfig() {

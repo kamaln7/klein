@@ -83,7 +83,7 @@ func (b *Klein) redirect(w http.ResponseWriter, r *http.Request, alias string) {
 		return
 	}
 
-	http.Redirect(w, r, url, 301)
+	http.Redirect(w, r, url, 302)
 }
 
 func (b *Klein) create(w http.ResponseWriter, r *http.Request) {

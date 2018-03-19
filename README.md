@@ -21,10 +21,11 @@ klein has three core components that are abstracted into "modules" to allow diff
      * Memorable—returns a configurable amount of English words
 3. storage
    * Handles storing and reading shortened URLs.
-   * Comes with three modules:
+   * Comes with four modules:
      * File—stores URL data as text files in a directory
      * Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
      * Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
+     * Spaces-stores URL data in DigitalOcean Spaces
 
 ## Usage
 
@@ -56,26 +57,31 @@ Usage:
   klein [flags]
 
 Flags:
-      --alias string                    what alias generation to use (alphanumeric, memorable) (default "alphanumeric")
-      --alias.alphanumeric.alpha        use letters in code (default true)
-      --alias.alphanumeric.length int   alphanumeric code length (default 5)
-      --alias.alphanumeric.num          use numbers in code (default true)
-      --alias.memorable.length int      memorable word count (default 3)
-      --auth string                     what auth backend to use (basic, key, none) (default "none")
-      --auth.basic.password string      password for HTTP basic auth
-      --auth.basic.username string      username for HTTP basic auth
-      --auth.key string                 upload API key
-  -h, --help                            help for klein
-      --listen string                   listen address (default "127.0.0.1:5556")
-      --root string                     root redirect
-      --storage string                  what storage backend to use (file, boltdb, redis) (default "file")
-      --storage.boltdb.path string      path to use for bolt db (default "bolt.db")
-      --storage.file.path string        path to use for file store (default "urls")
-      --storage.redis.address string    address:port of redis instance (default "127.0.0.1:6379")
-      --storage.redis.auth string       password to access redis
-      --storage.redis.db int            db to select within redis
-      --template string                 path to error template
-      --url string                      path to public facing url
+      --alias string                       what alias generation to use (alphanumeric, memorable) (default "alphanumeric")
+      --alias.alphanumeric.alpha           use letters in code (default true)
+      --alias.alphanumeric.length int      alphanumeric code length (default 5)
+      --alias.alphanumeric.num             use numbers in code (default true)
+      --alias.memorable.length int         memorable word count (default 3)
+      --auth string                        what auth backend to use (basic, key, none) (default "none")
+      --auth.basic.password string         password for HTTP basic auth
+      --auth.basic.username string         username for HTTP basic auth
+      --auth.key string                    upload API key
+  -h, --help                               help for klein
+      --listen string                      listen address (default "127.0.0.1:5556")
+      --root string                        root redirect
+      --storage string                     what storage backend to use (file, boltdb, redis, spaces) (default "file")
+      --storage.boltdb.path string         path to use for bolt db (default "bolt.db")
+      --storage.file.path string           path to use for file store (default "urls")
+      --storage.redis.address string       address:port of redis instance (default "127.0.0.1:6379")
+      --storage.redis.auth string          password to access redis
+      --storage.redis.db int               db to select within redis
+      --storage.spaces.access_key string   access key for spaces
+      --storage.spaces.path string         path of the file in spaces (default "klein.json")
+      --storage.spaces.region string       region for spaces
+      --storage.spaces.secret_key string   secret key for spaces
+      --storage.spaces.space string        space to use
+      --template string                    path to error template
+      --url string                         path to public facing url
 ```
 
 You can also use environment variables for configuration.
