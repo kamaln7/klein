@@ -48,28 +48,38 @@ Grab the latest binary from [the releases page](https://github.com/kamaln7/klein
 
 klein uses CLI options for config.
 
-| option                     | description                                                                                                  | default              |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------- |
-| `-alphanumeric.length int` | Alias length for the Alphanumeric alias module.                                                              |                      |
-| `-alphanumeric.alpha bool` | Include English alphabet characters in the Alphanumeric module aliases.                                      | `true`               |
-| `-alphanumeric.num bool`   | Include numbers in the Alphanumeric module aliases.                                                          | `true`               |
-| `-auth.key string`         | `key` for the Static Key auth module.                                                                        |                      |
-| `-auth.username string`    | Username for the HTTP Basic Auth auth module.                                                                |                      |
-| `-auth.password string`    | Password for the HTTP Basic Auth auth module.                                                                |                      |
-| `-memorable.length int`    | Alias length for the Memorable alias module.                                                                 |                      |
-| `-listenAddr string`       | The network address to listen on.                                                                            | `127.0.0.1:5556`     |
-| `-file.path string`        | Path to the storage directory for the File storage module.                                                   |                      |
-| `-bolt.path string`        | Path to the bolt database for the Bolt storage module.                                                       |                      |
-| `-redis.address string`    | Address:Port for the Redis storage module.                                                                   |                      |
-| `-redis.auth string`       | Authentication string for the Redis storage module.                                                          |                      |
-| `-redis.db int`            | Database ID for the Redis storage module.                                                                    | `0`                  |
-| `-root string`             | The URL to redirect to when the `/` path is accessed. Returns a `404 Not Found` error if left blank.         |                      |
-| `-template string`         | Path to 404 document to serve in case a 404 error occurs. Returns a plaintext "404 not found" if left blank. |                      |
-| `-url string`              | Base URL to the hosted instance of the klein.                                                                | `http://listenAddr/` |
+```
+./klein --help
+klein is a minimalist URL shortener.
 
-You must specify one storage provider (`file.path`/`bolt.path`/`redis.address`) and one alias provider (`alphanumeric.length`/`memorable.length`).
+Usage:
+  klein [flags]
 
-If none of `auth.key`, `auth.username`, and `auth.password` are provided, the server is run without authentication.
+Flags:
+      --alias string                    what alias generation to use (alphanumeric, memorable) (default "alphanumeric")
+      --alias.alphanumeric.alpha        use letters in code (default true)
+      --alias.alphanumeric.length int   alphanumeric code length (default 5)
+      --alias.alphanumeric.num          use numbers in code (default true)
+      --alias.memorable.length int      memorable word count (default 3)
+      --auth string                     what auth backend to use (basic, key, none) (default "none")
+      --auth.basic.password string      password for HTTP basic auth
+      --auth.basic.username string      username for HTTP basic auth
+      --auth.key string                 upload API key
+  -h, --help                            help for klein
+      --listen string                   listen address (default "127.0.0.1:5556")
+      --root string                     root redirect
+      --storage string                  what storage backend to use (file, boltdb, redis) (default "file")
+      --storage.boltdb.path string      path to use for bolt db (default "bolt.db")
+      --storage.file.path string        path to use for file store (default "urls")
+      --storage.redis.address string    address:port of redis instance (default "127.0.0.1:6379")
+      --storage.redis.auth string       password to access redis
+      --storage.redis.db int            db to select within redis
+      --template string                 path to error template
+      --url string                      path to public facing url
+```
+
+You can also use environment variables for configuration.
+For environment variables, each option is prefixed with `klein` and dots are replaced with underscores, eg the environment variable for the `auth.key` option is `KLEIN_AUTH_KEY`.
 
 ### Service file
 
@@ -93,6 +103,13 @@ WantedBy=multi-user.target
 ```
 
 Don't forget to add your config to the `ExecStart` line and update `User` and `Group` if necessary. Make sure that klein has permission to write to the URLs directory.
+
+## Development
+To manage dependencies, we use [dep](https://github.com/golang/dep).
+To install dependencies for this project, install dep, and then run `dep ensure` in this workspace.
+
+To build the app, run `go build`.  
+This will produce a binary named `klein`. You can now run the app by running `./klein`
 
 ## License
 
