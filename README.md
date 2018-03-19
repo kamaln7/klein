@@ -111,6 +111,11 @@ To install dependencies for this project, install dep, and then run `dep ensure`
 To build the app, run `go build`.  
 This will produce a binary named `klein`. You can now run the app by running `./klein`
 
+### ❤️ Contributors
+
+- @LukeHandle
+- @DMarby
+
 ## License
 
 See [./LICENSE](/LICENSE)
