@@ -23,3 +23,5 @@ git:
 dockers:
   - image: kamaln7/klein
     dockerfile: Dockerfile-goreleaser
+    extra_files:
+      - 404.html
