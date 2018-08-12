@@ -1,0 +1,7 @@
+FROM drone/ca-certs
+COPY 404.html /404.html
+COPY klein /
+ENV KLEIN_LISTEN 0.0.0.0:5556
+ENV KLEIN_TEMPLATE /404.html
+EXPOSE 5556/tcp
+ENTRYPOINT ["/klein"]
