@@ -1,0 +1,5 @@
+FROM drone/ca-certs
+COPY klein /
+ENV LISTEN 0.0.0.0:5556
+EXPOSE 5556/tcp
+ENTRYPOINT ["/klein"]

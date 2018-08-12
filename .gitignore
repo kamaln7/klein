@@ -2,3 +2,5 @@ vendor
 klein
 urls
 bolt.db
+.DS_Store
+dist/
