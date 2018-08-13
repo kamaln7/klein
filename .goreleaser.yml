@@ -25,3 +25,6 @@ dockers:
     dockerfile: Dockerfile-goreleaser
     extra_files:
       - 404.html
+    tag_templates:
+      - "{{ .Version }}"
+      - latest
