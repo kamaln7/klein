@@ -43,7 +43,9 @@ Once installed and configured, there are two actions that you can do:
 
 ## Installation
 
-Grab the latest binary from [the releases page](https://github.com/kamaln7/klein/releases) and drop it in `/usr/local/bin`, `/opt`, or wherever you like.
+Use the docker image `kamaln7/klein`. The `latest` tag is a good bet.
+
+Or grab the latest binary from [the releases page](https://github.com/kamaln7/klein/releases) and drop it in `/usr/local/bin`, `/opt`, or wherever you like.
 
 ### Configuration
 
