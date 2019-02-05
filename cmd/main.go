@@ -121,10 +121,11 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not connect to spaces: %s\n", err.Error())
 			}
-		case "postgres":
+		case "sql.pg":
 			var err error
 			storageProvider, err = postgresql.New(&postgresql.Config{
 				Host:     viper.GetString("storage.sql.pg.host"),
+				Port:     viper.GetInt32("storage.sql.pg.port"),
 				User:     viper.GetString("storage.sql.pg.user"),
 				Password: viper.GetString("storage.sql.pg.password"),
 				Database: viper.GetString("storage.sql.pg.database"),
@@ -230,7 +231,7 @@ func init() {
 	viper.BindPFlag("auth.basic.password", rootCmd.PersistentFlags().Lookup("auth.basic.password"))
 
 	// Storage options
-	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces)")
+	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces, sql.pg)")
 	viper.BindPFlag("storage", rootCmd.PersistentFlags().Lookup("storage"))
 
 	rootCmd.PersistentFlags().String("storage.file.path", "urls", "path to use for file store")
@@ -265,6 +266,9 @@ func init() {
 
 	rootCmd.PersistentFlags().String("storage.sql.pg.host", "localhost", "postgresql host")
 	viper.BindPFlag("storage.sql.pg.host", rootCmd.PersistentFlags().Lookup("storage.sql.pg.host"))
+
+	rootCmd.PersistentFlags().Int32("storage.sql.pg.port", 5432, "postgresql port")
+	viper.BindPFlag("storage.sql.pg.port", rootCmd.PersistentFlags().Lookup("storage.sql.pg.port"))
 
 	rootCmd.PersistentFlags().String("storage.sql.pg.user", "klein", "postgresql user")
 	viper.BindPFlag("storage.sql.pg.user", rootCmd.PersistentFlags().Lookup("storage.sql.pg.user"))
