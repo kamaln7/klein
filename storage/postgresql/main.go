@@ -13,14 +13,14 @@ import (
 	"github.com/kamaln7/klein/storage"
 )
 
-// Provider implements a redis-based storage system
+// Provider implements a PostgreSQL-based storage system
 type Provider struct {
 	Config *Config
 
 	db *sqlx.DB
 }
 
-// Config contains the configuration for the redis storage
+// Config contains the configuration for the PostgreSQL server and database
 type Config struct {
 	Host, User, Password, Database, Table, SSLMode string
 	Port                                           int32
@@ -51,7 +51,7 @@ func New(c *Config) (*Provider, error) {
 	return provider, nil
 }
 
-// Init sets up the Redis pool
+// Init sets up the PostgreSQL database connection and creates the table if needed
 func (p *Provider) Init() error {
 	cc := pgx.ConnConfig{
 		Host:     p.Config.Host,
