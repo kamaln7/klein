@@ -48,3 +48,7 @@
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
   version = "1.13.16"
+
+[[constraint]]
+  name = "github.com/jackc/pgx"
+  version = "3.3.0"

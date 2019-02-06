@@ -18,6 +18,7 @@ import (
 	"github.com/kamaln7/klein/storage"
 	"github.com/kamaln7/klein/storage/bolt"
 	"github.com/kamaln7/klein/storage/file"
+	"github.com/kamaln7/klein/storage/postgresql"
 	"github.com/kamaln7/klein/storage/redis"
 	"github.com/kamaln7/klein/storage/spaces"
 	"github.com/spf13/cobra"
@@ -120,8 +121,23 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not connect to spaces: %s\n", err.Error())
 			}
+		case "sql.pg":
+			var err error
+			storageProvider, err = postgresql.New(&postgresql.Config{
+				Host:     viper.GetString("storage.sql.pg.host"),
+				Port:     viper.GetInt32("storage.sql.pg.port"),
+				User:     viper.GetString("storage.sql.pg.user"),
+				Password: viper.GetString("storage.sql.pg.password"),
+				Database: viper.GetString("storage.sql.pg.database"),
+				Table:    viper.GetString("storage.sql.pg.table"),
+				SSLMode:  viper.GetString("storage.sql.pg.sslmode"),
+			})
+
+			if err != nil {
+				logger.Fatalf("could not connect to postgresql: %s\n", err.Error())
+			}
 		default:
-			logger.Fatal("Invalid storage backend")
+			logger.Fatal("invalid storage backend")
 		}
 
 		// alias
@@ -215,7 +231,7 @@ func init() {
 	viper.BindPFlag("auth.basic.password", rootCmd.PersistentFlags().Lookup("auth.basic.password"))
 
 	// Storage options
-	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces)")
+	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces, sql.pg)")
 	viper.BindPFlag("storage", rootCmd.PersistentFlags().Lookup("storage"))
 
 	rootCmd.PersistentFlags().String("storage.file.path", "urls", "path to use for file store")
@@ -247,6 +263,27 @@ func init() {
 
 	rootCmd.PersistentFlags().String("storage.spaces.path", "klein.json", "path of the file in spaces")
 	viper.BindPFlag("storage.spaces.path", rootCmd.PersistentFlags().Lookup("storage.spaces.path"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.host", "localhost", "postgresql host")
+	viper.BindPFlag("storage.sql.pg.host", rootCmd.PersistentFlags().Lookup("storage.sql.pg.host"))
+
+	rootCmd.PersistentFlags().Int32("storage.sql.pg.port", 5432, "postgresql port")
+	viper.BindPFlag("storage.sql.pg.port", rootCmd.PersistentFlags().Lookup("storage.sql.pg.port"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.user", "klein", "postgresql user")
+	viper.BindPFlag("storage.sql.pg.user", rootCmd.PersistentFlags().Lookup("storage.sql.pg.user"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.password", "secret", "postgresql password")
+	viper.BindPFlag("storage.sql.pg.password", rootCmd.PersistentFlags().Lookup("storage.sql.pg.password"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.database", "klein", "postgresql database")
+	viper.BindPFlag("storage.sql.pg.database", rootCmd.PersistentFlags().Lookup("storage.sql.pg.database"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.table", "klein", "postgresql table")
+	viper.BindPFlag("storage.sql.pg.table", rootCmd.PersistentFlags().Lookup("storage.sql.pg.table"))
+
+	rootCmd.PersistentFlags().String("storage.sql.pg.sslmode", "prefer", "postgresql sslmode")
+	viper.BindPFlag("storage.sql.pg.sslmode", rootCmd.PersistentFlags().Lookup("storage.sql.pg.sslmode"))
 }
 
 func initConfig() {

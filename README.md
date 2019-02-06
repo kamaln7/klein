@@ -25,7 +25,8 @@ klein has three core components that are abstracted into "modules" to allow diff
      * File—stores URL data as text files in a directory
      * Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
      * Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
-     * Spaces-stores URL data in DigitalOcean Spaces
+     * Spaces—stores URL data in DigitalOcean Spaces
+     * PostgreSQL—stores URL data in a [PostgreSQL](https://www.postgresql.org) database
 
 ## Usage
 
@@ -43,7 +44,7 @@ Once installed and configured, there are two actions that you can do:
 
 ## Installation
 
-Use the docker image `kamaln7/klein`. The `latest` tag is a good bet.
+✅ Use the docker image `kamaln7/klein`. The `latest` tag is a good bet. See [the releases page](https://github.com/kamaln7/klein/releases) for version numbers. 
 
 Or grab the latest binary from [the releases page](https://github.com/kamaln7/klein/releases) and drop it in `/usr/local/bin`, `/opt`, or wherever you like.
 
@@ -71,7 +72,7 @@ Flags:
   -h, --help                               help for klein
       --listen string                      listen address (default "127.0.0.1:5556")
       --root string                        root redirect
-      --storage string                     what storage backend to use (file, boltdb, redis, spaces) (default "file")
+      --storage string                     what storage backend to use (file, boltdb, redis, spaces, sql.pg) (default "file")
       --storage.boltdb.path string         path to use for bolt db (default "bolt.db")
       --storage.file.path string           path to use for file store (default "urls")
       --storage.redis.address string       address:port of redis instance (default "127.0.0.1:6379")
@@ -82,6 +83,13 @@ Flags:
       --storage.spaces.region string       region for spaces
       --storage.spaces.secret_key string   secret key for spaces
       --storage.spaces.space string        space to use
+      --storage.sql.pg.database string     postgresql database (default "klein")
+      --storage.sql.pg.host string         postgresql host (default "localhost")
+      --storage.sql.pg.password string     postgresql password (default "secret")
+      --storage.sql.pg.port int32          postgresql port (default 5432)
+      --storage.sql.pg.sslmode string      postgresql sslmode (default "prefer")
+      --storage.sql.pg.table string        postgresql table (default "klein")
+      --storage.sql.pg.user string         postgresql user (default "klein")
       --template string                    path to error template
       --url string                         path to public facing url
 ```
