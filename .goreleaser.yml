@@ -18,13 +18,10 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-git:
-  short_hash: true
 dockers:
-  - image: kamaln7/klein
-    dockerfile: Dockerfile-goreleaser
+  - dockerfile: Dockerfile-goreleaser
     extra_files:
       - 404.html
-    tag_templates:
-      - "{{ .Version }}"
-      - latest
+    image_templates:
+      - "kamaln7/klein:{{ .Version }}"
+      - kamaln7/klein:latest
