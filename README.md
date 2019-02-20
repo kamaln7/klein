@@ -26,6 +26,7 @@ klein has three core components that are abstracted into drivers to allow differ
      - Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
      - Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
      - Spaces.stateful—stores URL data as a single file in [DigitalOcean Spaces](https://do.co/spaces)
+     - Spaces.stateless—stores each URL as an object in [DigitalOcean Spaces](https://do.co/spaces)
      - PostgreSQL—stores URL data in a [PostgreSQL](https://www.postgresql.org) database
 
 ## Usage
@@ -69,38 +70,40 @@ Usage:
   klein [flags]
 
 Flags:
-      --alias.alphanumeric.alpha              use letters in code (default true)
-      --alias.alphanumeric.length int         alphanumeric code length (default 5)
-      --alias.alphanumeric.num                use numbers in code (default true)
-      --alias.driver string                   what alias generation to use (alphanumeric, memorable) (default "alphanumeric")
-      --alias.memorable.length int            memorable word count (default 3)
-      --auth.basic.password string            password for HTTP basic auth
-      --auth.basic.username string            username for HTTP basic auth
-      --auth.driver string                    what auth backend to use (basic, key, none) (default "none")
-      --auth.key string                       upload API key
-      --error-template string                 path to error template
-  -h, --help                                  help for klein
-      --listen string                         listen address (default "127.0.0.1:5556")
-      --root string                           root redirect
-      --storage.boltdb.path string            path to use for bolt db (default "bolt.db")
-      --storage.driver string                 what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg) (default "file")
-      --storage.file.path string              path to use for file store (default "urls")
-      --storage.redis.address string          address:port of redis instance (default "127.0.0.1:6379")
-      --storage.redis.auth string             password to access redis
-      --storage.redis.db int                  db to select within redis
-      --storage.spaces.access-key string      access key for spaces
-      --storage.spaces.region string          region for spaces
-      --storage.spaces.secret-key string      secret key for spaces
-      --storage.spaces.space string           space to use
-      --storage.spaces.stateful.path string   path of the file in spaces (spaces.stateful driver) (default "klein.json")
-      --storage.sql.pg.database string        postgresql database (default "klein")
-      --storage.sql.pg.host string            postgresql host (default "localhost")
-      --storage.sql.pg.password string        postgresql password (default "secret")
-      --storage.sql.pg.port int32             postgresql port (default 5432)
-      --storage.sql.pg.sslmode string         postgresql sslmode (default "prefer")
-      --storage.sql.pg.table string           postgresql table (default "klein")
-      --storage.sql.pg.user string            postgresql user (default "klein")
-      --url string                            path to public facing url
+      --alias.alphanumeric.alpha                           use letters in code (default true)
+      --alias.alphanumeric.length int                      alphanumeric code length (default 5)
+      --alias.alphanumeric.num                             use numbers in code (default true)
+      --alias.driver string                                what alias generation to use (alphanumeric, memorable) (default "alphanumeric")
+      --alias.memorable.length int                         memorable word count (default 3)
+      --auth.basic.password string                         password for HTTP basic auth
+      --auth.basic.username string                         username for HTTP basic auth
+      --auth.driver string                                 what auth backend to use (basic, key, none) (default "none")
+      --auth.key string                                    upload API key
+      --error-template string                              path to error template
+  -h, --help                                               help for klein
+      --listen string                                      listen address (default "127.0.0.1:5556")
+      --root string                                        root redirect
+      --storage.boltdb.path string                         path to use for bolt db (default "bolt.db")
+      --storage.driver string                              what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg) (default "file")
+      --storage.file.path string                           path to use for file store (default "urls")
+      --storage.redis.address string                       address:port of redis instance (default "127.0.0.1:6379")
+      --storage.redis.auth string                          password to access redis
+      --storage.redis.db int                               db to select within redis
+      --storage.spaces.access-key string                   access key for spaces
+      --storage.spaces.region string                       region for spaces
+      --storage.spaces.secret-key string                   secret key for spaces
+      --storage.spaces.space string                        space to use
+      --storage.spaces.stateful.path string                path of the file in spaces (default "klein.json")
+      --storage.spaces.stateless.cache-duration duration   time to cache spaces results in memory. 0 to disable (default 1m0s)
+      --storage.spaces.stateless.path string               path of the directory in spaces to store urls in (default "/klein")
+      --storage.sql.pg.database string                     postgresql database (default "klein")
+      --storage.sql.pg.host string                         postgresql host (default "localhost")
+      --storage.sql.pg.password string                     postgresql password (default "secret")
+      --storage.sql.pg.port int32                          postgresql port (default 5432)
+      --storage.sql.pg.sslmode string                      postgresql sslmode (default "prefer")
+      --storage.sql.pg.table string                        postgresql table (default "klein")
+      --storage.sql.pg.user string                         postgresql user (default "klein")
+      --url string                                         path to public facing url
 ```
 
 ### Service file

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/alias/alphanumeric"
@@ -21,6 +22,7 @@ import (
 	"github.com/kamaln7/klein/storage/postgresql"
 	"github.com/kamaln7/klein/storage/redis"
 	"github.com/kamaln7/klein/storage/spaces"
+	"github.com/kamaln7/klein/storage/spacesstateless"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -116,6 +118,29 @@ var rootCmd = &cobra.Command{
 				Region:    region,
 				Space:     space,
 				Path:      viper.GetString("storage.spaces.stateful.path"),
+			})
+
+			if err != nil {
+				logger.Fatalf("could not connect to spaces: %s\n", err.Error())
+			}
+		case "spaces.stateless":
+			accessKey := viper.GetString("storage.spaces.access_key")
+			secretKey := viper.GetString("storage.spaces.secret_key")
+			region := viper.GetString("storage.spaces.region")
+			space := viper.GetString("storage.spaces.space")
+
+			if accessKey == "" || secretKey == "" || region == "" || space == "" {
+				logger.Fatalf("You need to provide an access key, secret key, region and space to use the spaces stateless storage backend")
+			}
+
+			var err error
+			storageProvider, err = spacesstateless.New(&spacesstateless.Config{
+				AccessKey:     accessKey,
+				SecretKey:     secretKey,
+				Region:        region,
+				Space:         space,
+				Path:          viper.GetString("storage.spaces.stateless.path"),
+				CacheDuration: viper.GetDuration("storage.spaces.stateless.cache-duration"),
 			})
 
 			if err != nil {
@@ -227,7 +252,10 @@ func init() {
 	rootCmd.PersistentFlags().String("storage.spaces.region", "", "region for spaces")
 	rootCmd.PersistentFlags().String("storage.spaces.space", "", "space to use")
 
-	rootCmd.PersistentFlags().String("storage.spaces.stateful.path", "klein.json", "path of the file in spaces (spaces.stateful driver)")
+	rootCmd.PersistentFlags().String("storage.spaces.stateful.path", "klein.json", "path of the file in spaces")
+
+	rootCmd.PersistentFlags().String("storage.spaces.stateless.path", "/klein", "path of the directory in spaces to store urls in")
+	rootCmd.PersistentFlags().Duration("storage.spaces.stateless.cache-duration", time.Minute, "time to cache spaces results in memory. 0 to disable")
 
 	rootCmd.PersistentFlags().String("storage.sql.pg.host", "localhost", "postgresql host")
 	rootCmd.PersistentFlags().Int32("storage.sql.pg.port", 5432, "postgresql port")
@@ -242,8 +270,7 @@ func init() {
 
 func initConfig() {
 	viper.SetEnvPrefix("klein")
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
 	viper.AutomaticEnv()
 }
 

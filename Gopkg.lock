@@ -61,6 +61,14 @@
   version = "v1.4.7"
 
 [[projects]]
+  digest = "1:db18b69d50d54aadb436b8639e2b55b5ece5f595a601d9eb461fabd998ebb288"
+  name = "github.com/go-ini/ini"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6333e38ac20b8949a8dd68baa3650f4dee8f39f0"
+  version = "v1.33.0"
+
+[[projects]]
   digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
@@ -149,7 +157,19 @@
   version = "v1.1.2"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
+=======
+  digest = "1:808cdddf087fb64baeae67b8dfaee2069034d9704923a3cb8bd96a995421a625"
+  name = "github.com/patrickmn/go-cache"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+  version = "v2.1.0"
+
+[[projects]]
+  digest = "1:7231124c9669dfb54b82ef8b89f2735cf5d5d2529a23c6ac93a8c4b8bbb28b28"
+>>>>>>> 29ebd1e... Add a spaces.stateless storage driver
   name = "github.com/pelletier/go-toml"
   packages = ["."]
   pruneopts = "UT"
@@ -261,6 +281,7 @@
     "github.com/jmoiron/sqlx",
     "github.com/mediocregopher/radix.v2/pool",
     "github.com/mediocregopher/radix.v2/redis",
+    "github.com/patrickmn/go-cache",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
   ]
