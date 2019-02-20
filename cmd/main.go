@@ -135,11 +135,12 @@ var rootCmd = &cobra.Command{
 
 			var err error
 			storageProvider, err = spacesstateless.New(&spacesstateless.Config{
-				AccessKey: accessKey,
-				SecretKey: secretKey,
-				Region:    region,
-				Space:     space,
-				Path:      viper.GetString("storage.spaces.path"),
+				AccessKey:     accessKey,
+				SecretKey:     secretKey,
+				Region:        region,
+				Space:         space,
+				Path:          viper.GetString("storage.spaces.stateless.path"),
+				CacheDuration: viper.GetDuration("storage.spaces.stateless.cache-duration"),
 			})
 
 			if err != nil {
@@ -254,7 +255,7 @@ func init() {
 	rootCmd.PersistentFlags().String("storage.spaces.stateful.path", "klein.json", "path of the file in spaces")
 
 	rootCmd.PersistentFlags().String("storage.spaces.stateless.path", "/klein", "path of the directory in spaces to store urls in")
-	rootCmd.PersistentFlags().Duration("storage.spaces.stateless.cacheduration", time.Minute, "time to cache spaces results in memory. 0 to disable")
+	rootCmd.PersistentFlags().Duration("storage.spaces.stateless.cache-duration", time.Minute, "time to cache spaces results in memory. 0 to disable")
 
 	rootCmd.PersistentFlags().String("storage.sql.pg.host", "localhost", "postgresql host")
 	rootCmd.PersistentFlags().Int32("storage.sql.pg.port", 5432, "postgresql port")
@@ -269,8 +270,7 @@ func init() {
 
 func initConfig() {
 	viper.SetEnvPrefix("klein")
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
 	viper.AutomaticEnv()
 }
 
