@@ -1,6 +1,9 @@
 builds:
-- env:
-  - CGO_ENABLED=0
+  - binary: klein
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X "github.com/kamaln7/klein/cmd.Version={{.Version}}"
 archive:
   replacements:
     darwin: Darwin
@@ -9,19 +12,20 @@ archive:
     386: i386
     amd64: x86_64
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Version }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - "^docs:"
+      - "^test:"
 dockers:
   - dockerfile: Dockerfile-goreleaser
     extra_files:
       - 404.html
     image_templates:
       - "kamaln7/klein:{{ .Version }}"
+      - "kamaln7/klein:{{ .Major }}-latest"
       - kamaln7/klein:latest
