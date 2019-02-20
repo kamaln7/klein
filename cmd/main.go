@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
 
 		// 404
 		notFoundHTML := []byte("404 not found")
-		notFoundPath := viper.GetString("template")
+		notFoundPath := viper.GetString("error-template")
 		if notFoundPath != "" {
 			var err error
 			notFoundHTML, err = ioutil.ReadFile(notFoundPath)
@@ -46,7 +46,7 @@ var rootCmd = &cobra.Command{
 
 		// auth
 		var authProvider auth.Provider
-		switch viper.GetString("auth") {
+		switch viper.GetString("auth.driver") {
 		case "none":
 			authProvider = unauthenticated.New()
 		case "basic":
@@ -69,12 +69,12 @@ var rootCmd = &cobra.Command{
 				Key: key,
 			})
 		default:
-			logger.Fatal("Invalid auth provider")
+			logger.Fatal("invalid auth driver")
 		}
 
 		// storage
 		var storageProvider storage.Provider
-		switch viper.GetString("storage") {
+		switch viper.GetString("storage.driver") {
 		case "file":
 			storageProvider = file.New(&file.Config{
 				Path: viper.GetString("storage.file.path"),
@@ -99,7 +99,7 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not open redis database: %s\n", err.Error())
 			}
-		case "spaces":
+		case "spaces.stateful":
 			accessKey := viper.GetString("storage.spaces.access_key")
 			secretKey := viper.GetString("storage.spaces.secret_key")
 			region := viper.GetString("storage.spaces.region")
@@ -115,7 +115,7 @@ var rootCmd = &cobra.Command{
 				SecretKey: secretKey,
 				Region:    region,
 				Space:     space,
-				Path:      viper.GetString("storage.spaces.path"),
+				Path:      viper.GetString("storage.spaces.stateful.path"),
 			})
 
 			if err != nil {
@@ -137,12 +137,12 @@ var rootCmd = &cobra.Command{
 				logger.Fatalf("could not connect to postgresql: %s\n", err.Error())
 			}
 		default:
-			logger.Fatal("invalid storage backend")
+			logger.Fatal("invalid storage driver")
 		}
 
 		// alias
 		var aliasProvider alias.Provider
-		switch viper.GetString("alias") {
+		switch viper.GetString("alias.driver") {
 		case "alphanumeric":
 			var err error
 			aliasProvider, err = alphanumeric.New(&alphanumeric.Config{
@@ -159,7 +159,7 @@ var rootCmd = &cobra.Command{
 				Length: viper.GetInt("alias.memorable.length"),
 			})
 		default:
-			logger.Fatal("Invalid alias generator")
+			logger.Fatal("invalid alias driver")
 		}
 
 		// url
@@ -189,105 +189,60 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// General options
-	rootCmd.PersistentFlags().String("template", "", "path to error template")
-	viper.BindPFlag("template", rootCmd.PersistentFlags().Lookup("template"))
-
+	rootCmd.PersistentFlags().String("error-template", "", "path to error template")
 	rootCmd.PersistentFlags().String("url", "", "path to public facing url")
-	viper.BindPFlag("url", rootCmd.PersistentFlags().Lookup("url"))
-
 	rootCmd.PersistentFlags().String("listen", "127.0.0.1:5556", "listen address")
-	viper.BindPFlag("listen", rootCmd.PersistentFlags().Lookup("listen"))
-
 	rootCmd.PersistentFlags().String("root", "", "root redirect")
-	viper.BindPFlag("root", rootCmd.PersistentFlags().Lookup("root"))
 
 	// Alias options
-	rootCmd.PersistentFlags().String("alias", "alphanumeric", "what alias generation to use (alphanumeric, memorable)")
-	viper.BindPFlag("alias", rootCmd.PersistentFlags().Lookup("alias"))
+	rootCmd.PersistentFlags().String("alias.driver", "alphanumeric", "what alias generation to use (alphanumeric, memorable)")
 
 	rootCmd.PersistentFlags().Int("alias.alphanumeric.length", 5, "alphanumeric code length")
-	viper.BindPFlag("alias.alphanumeric.length", rootCmd.PersistentFlags().Lookup("alias.alphanumeric.length"))
-
 	rootCmd.PersistentFlags().Bool("alias.alphanumeric.alpha", true, "use letters in code")
-	viper.BindPFlag("alias.alphanumeric.alpha", rootCmd.PersistentFlags().Lookup("alias.alphanumeric.alpha"))
-
 	rootCmd.PersistentFlags().Bool("alias.alphanumeric.num", true, "use numbers in code")
-	viper.BindPFlag("alias.alphanumeric.num", rootCmd.PersistentFlags().Lookup("alias.alphanumeric.num"))
 
 	rootCmd.PersistentFlags().Int("alias.memorable.length", 3, "memorable word count")
-	viper.BindPFlag("alias.memorable.length", rootCmd.PersistentFlags().Lookup("alias.memorable.length"))
 
 	// Auth options
-	rootCmd.PersistentFlags().String("auth", "none", "what auth backend to use (basic, key, none)")
-	viper.BindPFlag("auth", rootCmd.PersistentFlags().Lookup("auth"))
+	rootCmd.PersistentFlags().String("auth.driver", "none", "what auth backend to use (basic, key, none)")
 
 	rootCmd.PersistentFlags().String("auth.key", "", "upload API key")
-	viper.BindPFlag("auth.key", rootCmd.PersistentFlags().Lookup("auth.key"))
 
 	rootCmd.PersistentFlags().String("auth.basic.username", "", "username for HTTP basic auth")
-	viper.BindPFlag("auth.basic.username", rootCmd.PersistentFlags().Lookup("auth.basic.username"))
-
 	rootCmd.PersistentFlags().String("auth.basic.password", "", "password for HTTP basic auth")
-	viper.BindPFlag("auth.basic.password", rootCmd.PersistentFlags().Lookup("auth.basic.password"))
 
 	// Storage options
-	rootCmd.PersistentFlags().String("storage", "file", "what storage backend to use (file, boltdb, redis, spaces, sql.pg)")
-	viper.BindPFlag("storage", rootCmd.PersistentFlags().Lookup("storage"))
+	rootCmd.PersistentFlags().String("storage.driver", "file", "what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg)")
 
 	rootCmd.PersistentFlags().String("storage.file.path", "urls", "path to use for file store")
-	viper.BindPFlag("storage.file.path", rootCmd.PersistentFlags().Lookup("storage.file.path"))
 
 	rootCmd.PersistentFlags().String("storage.boltdb.path", "bolt.db", "path to use for bolt db")
-	viper.BindPFlag("storage.boltdb.path", rootCmd.PersistentFlags().Lookup("storage.boltdb.path"))
 
 	rootCmd.PersistentFlags().String("storage.redis.address", "127.0.0.1:6379", "address:port of redis instance")
-	viper.BindPFlag("storage.redis.address", rootCmd.PersistentFlags().Lookup("storage.redis.address"))
-
 	rootCmd.PersistentFlags().String("storage.redis.auth", "", "password to access redis")
-	viper.BindPFlag("storage.redis.auth", rootCmd.PersistentFlags().Lookup("storage.redis.auth"))
-
 	rootCmd.PersistentFlags().Int("storage.redis.db", 0, "db to select within redis")
-	viper.BindPFlag("storage.redis.db", rootCmd.PersistentFlags().Lookup("storage.redis.db"))
 
-	rootCmd.PersistentFlags().String("storage.spaces.access_key", "", "access key for spaces")
-	viper.BindPFlag("storage.spaces.access_key", rootCmd.PersistentFlags().Lookup("storage.spaces.access_key"))
-
-	rootCmd.PersistentFlags().String("storage.spaces.secret_key", "", "secret key for spaces")
-	viper.BindPFlag("storage.spaces.secret_key", rootCmd.PersistentFlags().Lookup("storage.spaces.secret_key"))
-
+	rootCmd.PersistentFlags().String("storage.spaces.access-key", "", "access key for spaces")
+	rootCmd.PersistentFlags().String("storage.spaces.secret-key", "", "secret key for spaces")
 	rootCmd.PersistentFlags().String("storage.spaces.region", "", "region for spaces")
-	viper.BindPFlag("storage.spaces.region", rootCmd.PersistentFlags().Lookup("storage.spaces.region"))
-
 	rootCmd.PersistentFlags().String("storage.spaces.space", "", "space to use")
-	viper.BindPFlag("storage.spaces.space", rootCmd.PersistentFlags().Lookup("storage.spaces.space"))
 
-	rootCmd.PersistentFlags().String("storage.spaces.path", "klein.json", "path of the file in spaces")
-	viper.BindPFlag("storage.spaces.path", rootCmd.PersistentFlags().Lookup("storage.spaces.path"))
+	rootCmd.PersistentFlags().String("storage.spaces.stateful.path", "klein.json", "path of the file in spaces (spaces.stateful driver)")
 
 	rootCmd.PersistentFlags().String("storage.sql.pg.host", "localhost", "postgresql host")
-	viper.BindPFlag("storage.sql.pg.host", rootCmd.PersistentFlags().Lookup("storage.sql.pg.host"))
-
 	rootCmd.PersistentFlags().Int32("storage.sql.pg.port", 5432, "postgresql port")
-	viper.BindPFlag("storage.sql.pg.port", rootCmd.PersistentFlags().Lookup("storage.sql.pg.port"))
-
 	rootCmd.PersistentFlags().String("storage.sql.pg.user", "klein", "postgresql user")
-	viper.BindPFlag("storage.sql.pg.user", rootCmd.PersistentFlags().Lookup("storage.sql.pg.user"))
-
 	rootCmd.PersistentFlags().String("storage.sql.pg.password", "secret", "postgresql password")
-	viper.BindPFlag("storage.sql.pg.password", rootCmd.PersistentFlags().Lookup("storage.sql.pg.password"))
-
 	rootCmd.PersistentFlags().String("storage.sql.pg.database", "klein", "postgresql database")
-	viper.BindPFlag("storage.sql.pg.database", rootCmd.PersistentFlags().Lookup("storage.sql.pg.database"))
-
 	rootCmd.PersistentFlags().String("storage.sql.pg.table", "klein", "postgresql table")
-	viper.BindPFlag("storage.sql.pg.table", rootCmd.PersistentFlags().Lookup("storage.sql.pg.table"))
-
 	rootCmd.PersistentFlags().String("storage.sql.pg.sslmode", "prefer", "postgresql sslmode")
-	viper.BindPFlag("storage.sql.pg.sslmode", rootCmd.PersistentFlags().Lookup("storage.sql.pg.sslmode"))
+
+	viper.BindPFlags(rootCmd.PersistentFlags())
 }
 
 func initConfig() {
 	viper.SetEnvPrefix("klein")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 }
