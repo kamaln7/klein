@@ -50,7 +50,7 @@ Or grab the latest binary from [the releases page](https://github.com/kamaln7/kl
 
 ### Configuration
 
-klein uses CLI options or environment variables for config. For environment variables, each option is prefixed with `klein` and dots are replaced with underscores, eg the environment variable for the `auth.key` option is `KLEIN_AUTH_KEY`.
+klein uses CLI options or environment variables for config. For environment variables, each option is prefixed with `klein` and both dots and dashes are replaced with underscores, eg the environment variable for the `storage.spaces.access-key` option is `KLEIN_STORAGE_SPACES_ACCESS_KEY`.
 
 Running klein without any configuration will use the following default config:
 
@@ -105,7 +105,7 @@ Flags:
 
 ### Service file
 
-Here's a SystemD service file that you can use with klein:
+Here's a Systemd service file that you can use with klein:
 
 ```
 [Unit]

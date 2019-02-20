@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
 
 		// 404
 		notFoundHTML := []byte("404 not found")
-		notFoundPath := viper.GetString("template")
+		notFoundPath := viper.GetString("error-template")
 		if notFoundPath != "" {
 			var err error
 			notFoundHTML, err = ioutil.ReadFile(notFoundPath)
@@ -242,6 +242,7 @@ func init() {
 
 func initConfig() {
 	viper.SetEnvPrefix("klein")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 }
