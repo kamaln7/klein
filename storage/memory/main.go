@@ -22,6 +22,7 @@ var _ storage.Provider = new(Provider)
 func New(c *Config) *Provider {
 	return &Provider{
 		Config: c,
+		urls:   make(map[string]string),
 	}
 }
 
