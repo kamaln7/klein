@@ -26,13 +26,28 @@ func testProvider(p Provider, t *testing.T) {
 	alias := "example"
 	err = p.Store(url, alias)
 	if err != nil {
-		t.Error("Couldn't store a new URL")
+		t.Error("couldn't store a new URL")
 	}
 
 	// test alias conflict
 	err = p.Store(url, alias)
 	if err != ErrAlreadyExists {
-		t.Error("Couldn't handle storing a new URL with an existing alias properly")
+		t.Error("couldn't handle storing a new URL with an existing alias properly")
+	}
+
+	// look up alias
+	storedUrl, err := p.Get(alias)
+	if err != nil {
+		t.Error("couldn't look up an existing alias")
+	}
+	if storedUrl != url {
+		t.Error("got a wrong url when looking up an alias")
+	}
+
+	// look up inexistent alias
+	_, err = p.Get("1234567890")
+	if err != ErrNotFound {
+		t.Error("couldn't look up an inexistent alias")
 	}
 }
 
