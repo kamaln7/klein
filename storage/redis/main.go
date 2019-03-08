@@ -1,9 +1,7 @@
 package redis
 
 import (
-	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/storage"
-
 	"github.com/mediocregopher/radix.v2/pool"
 	"github.com/mediocregopher/radix.v2/redis"
 )
@@ -19,7 +17,6 @@ type Config struct {
 	Address string
 	Auth    string
 	DB      int
-	Alias   alias.Provider
 }
 
 // ensure that the storage.Provider interface is implemented
