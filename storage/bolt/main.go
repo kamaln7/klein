@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"time"
 
+	"github.com/boltdb/bolt"
 	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/storage"
-
-	"github.com/boltdb/bolt"
 )
 
 // Provider implements a file-based storage system
@@ -65,6 +64,9 @@ func (p *Provider) Get(alias string) (string, error) {
 	err := p.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("klein"))
 		url = bytes.TrimSpace(b.Get([]byte(alias)))
+		if url == nil {
+			return storage.ErrNotFound
+		}
 
 		return nil
 	})
@@ -78,20 +80,13 @@ func (p *Provider) Get(alias string) (string, error) {
 
 // Exists checks if there is a URL with the requested alias
 func (p *Provider) Exists(alias string) (bool, error) {
-	var url []byte
+	_, err := p.Get(alias)
 
-	err := p.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("klein"))
-		url = bytes.TrimSpace(b.Get([]byte(alias)))
-
-		return nil
-	})
-
-	if err != nil {
-		return false, err
+	if err == storage.ErrNotFound {
+		return false, nil
 	}
 
-	return (url != nil), nil
+	return true, err
 }
 
 // Store creates a new short URL
