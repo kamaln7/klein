@@ -7,48 +7,49 @@ import (
 	"github.com/kamaln7/klein/storage/memory"
 )
 
-func TestProviders(t *testing.T) {
-	providers := []Provider{
-		newMemoryTestProvider(),
-	}
-
-	for _, p := range providers {
-		testProvider(p, t)
-	}
+// Separate methods so that we can run just one of them. Nice for debugging, VS Code gives us run test annotations:
+// https://dmar.by/L8Du4Dr7
+func TestMemoryProvider(t *testing.T) {
+	testProvider(newMemoryTestProvider(), t)
 }
 
 func testProvider(p Provider, t *testing.T) {
-	t.Helper()
 	var err error
 
-	// test creating a new URL
 	url := "http://example.com"
 	alias := "example"
-	err = p.Store(url, alias)
-	if err != nil {
-		t.Error("couldn't store a new URL")
-	}
 
-	// test alias conflict
-	err = p.Store(url, alias)
-	if err != ErrAlreadyExists {
-		t.Error("couldn't handle storing a new URL with an existing alias properly")
-	}
+	t.Run("store new url", func(t *testing.T) {
+		err = p.Store(url, alias)
+		if err != nil {
+			t.Error("couldn't store a new URL")
+		}
+	})
 
-	// look up alias
-	storedUrl, err := p.Get(alias)
-	if err != nil {
-		t.Error("couldn't look up an existing alias")
-	}
-	if storedUrl != url {
-		t.Error("got a wrong url when looking up an alias")
-	}
+	t.Run("attempt to overwrite existing alias", func(t *testing.T) {
+		err = p.Store(url, alias)
+		if err != ErrAlreadyExists {
+			t.Error("couldn't handle storing a new URL with an existing alias properly")
+		}
+	})
 
-	// look up inexistent alias
-	_, err = p.Get("1234567890")
-	if err != ErrNotFound {
-		t.Error("couldn't look up an inexistent alias")
-	}
+	t.Run("look up existing alias", func(t *testing.T) {
+		storedUrl, err := p.Get(alias)
+		if err != nil {
+			t.Error("couldn't look up an existing alias")
+		}
+		if storedUrl != url {
+			t.Error("got a wrong url when looking up an alias")
+		}
+	})
+
+	t.Run("look up nonexistant alias", func(t *testing.T) {
+		// look up inexistent alias
+		_, err = p.Get("1234567890")
+		if err != ErrNotFound {
+			t.Error("didn't get the correct error looking up inexistent alias")
+		}
+	})
 }
 
 func newMemoryTestProvider() Provider {
