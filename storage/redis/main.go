@@ -74,7 +74,12 @@ func (p *Provider) Get(alias string) (string, error) {
 		return "", r.Err
 	}
 
-	return r.Str()
+	url, _ := r.Str()
+	if url == "" {
+		return "", storage.ErrNotFound
+	}
+
+	return url, nil
 }
 
 // Exists checks if there is a URL with the requested alias
@@ -91,6 +96,14 @@ func (p *Provider) Exists(alias string) (bool, error) {
 
 // Store creates a new short URL
 func (p *Provider) Store(url, alias string) error {
+	exists, err := p.Exists(alias)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return storage.ErrAlreadyExists
+	}
+
 	r := p.pool.Cmd("SET", alias, url)
 	return r.Err
 }
