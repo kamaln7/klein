@@ -9,7 +9,6 @@ import (
 	"github.com/jackc/pgx"
 	pgxstdlib "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/storage"
 )
 
@@ -24,8 +23,6 @@ type Provider struct {
 type Config struct {
 	Host, User, Password, Database, Table, SSLMode string
 	Port                                           int32
-
-	Alias alias.Provider
 }
 
 // ensure that the storage.Provider interface is implemented

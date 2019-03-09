@@ -19,6 +19,7 @@ import (
 	"github.com/kamaln7/klein/storage"
 	"github.com/kamaln7/klein/storage/bolt"
 	"github.com/kamaln7/klein/storage/file"
+	"github.com/kamaln7/klein/storage/memory"
 	"github.com/kamaln7/klein/storage/postgresql"
 	"github.com/kamaln7/klein/storage/redis"
 	"github.com/kamaln7/klein/storage/spaces"
@@ -161,6 +162,8 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not connect to postgresql: %s\n", err.Error())
 			}
+		case "memory":
+			storageProvider = memory.New(&memory.Config{})
 		default:
 			logger.Fatal("invalid storage driver")
 		}
@@ -237,7 +240,7 @@ func init() {
 	rootCmd.PersistentFlags().String("auth.basic.password", "", "password for HTTP basic auth")
 
 	// Storage options
-	rootCmd.PersistentFlags().String("storage.driver", "file", "what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg)")
+	rootCmd.PersistentFlags().String("storage.driver", "file", "what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg, memory)")
 
 	rootCmd.PersistentFlags().String("storage.file.path", "urls", "path to use for file store")
 

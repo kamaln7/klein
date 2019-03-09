@@ -22,12 +22,13 @@ klein has three core components that are abstracted into drivers to allow differ
 3. storage
    - Handles storing and reading shortened URLs.
    - Comes with four drivers:
-     - File—stores URL data as text files in a directory
-     - Bolt—stores URL data in a [bolt](https://github.com/boltdb/bolt) database
-     - Redis—stores URL data in a [redis](https://redis.io/) database (ensure you configure save)
-     - Spaces.stateful—stores URL data as a single file in [DigitalOcean Spaces](https://do.co/spaces)
+     - File—stores data as text files in a directory
+     - Bolt—stores data in a [bolt](https://github.com/boltdb/bolt) database
+     - Redis—stores data in a [redis](https://redis.io/) database (ensure you configure save)
+     - Spaces.stateful—stores data as a single file in [DigitalOcean Spaces](https://do.co/spaces)
      - Spaces.stateless—stores each URL as an object in [DigitalOcean Spaces](https://do.co/spaces)
-     - PostgreSQL—stores URL data in a [PostgreSQL](https://www.postgresql.org) database
+     - PostgreSQL—stores data in a [PostgreSQL](https://www.postgresql.org) database
+     - Memory—stores data in a temporary map in memory
 
 ## Usage
 
@@ -84,7 +85,7 @@ Flags:
       --listen string                                      listen address (default "127.0.0.1:5556")
       --root string                                        root redirect
       --storage.boltdb.path string                         path to use for bolt db (default "bolt.db")
-      --storage.driver string                              what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg) (default "file")
+      --storage.driver string                              what storage backend to use (file, boltdb, redis, spaces.stateful, sql.pg, memory) (default "file")
       --storage.file.path string                           path to use for file store (default "urls")
       --storage.redis.address string                       address:port of redis instance (default "127.0.0.1:6379")
       --storage.redis.auth string                          password to access redis

@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/storage"
 )
 
@@ -20,8 +19,7 @@ type Provider struct {
 
 // Config contains the configuration for the file storage
 type Config struct {
-	Path  string
-	Alias alias.Provider
+	Path string
 }
 
 // ensure that the storage.Provider interface is implemented

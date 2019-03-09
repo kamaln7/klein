@@ -12,7 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/storage"
 	cache "github.com/patrickmn/go-cache"
 )
@@ -34,7 +33,6 @@ type Config struct {
 	Path      string
 
 	CacheDuration time.Duration
-	Alias         alias.Provider
 }
 
 // ensure that the storage.Provider interface is implemented
