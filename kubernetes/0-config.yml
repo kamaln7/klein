@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: klein-config
+data:
+  KLEIN_ALIAS_DRIVER: alphanumeric
+  KLEIN_ALIAS_ALPHANUMERIC_ALPHA: "true"
+  KLEIN_ALIAS_ALPHANUMERIC_NUM: "true"
+  KLEIN_ALIAS_ALPHANUMERIC_LENGTH: "5"
+  KLEIN_AUTH_DRIVER: none
+  KLEIN_ROOT: https://github.com/kamaln7/klein
+  KLEIN_URL: http://klein.example.com
+  KLEIN_STORAGE_DRIVER: sql.pg
+  KLEIN_STORAGE_SQL_PG_HOST: db-postgresql-fra1-00000-do-user-00000-0.db.ondigitalocean.com
+  KLEIN_STORAGE_SQL_PG_USER: klein
+  KLEIN_STORAGE_SQL_PG_PASSWORD: password
+  KLEIN_STORAGE_SQL_PG_SSLMODE: require
+  KLEIN_STORAGE_SQL_PG_PORT: "25060"
+  KLEIN_STORAGE_SQL_PG_DATABASE: klein
