@@ -10,6 +10,7 @@ import (
 
 	"github.com/kamaln7/klein/alias"
 	"github.com/kamaln7/klein/alias/alphanumeric"
+	"github.com/kamaln7/klein/alias/emoji"
 	"github.com/kamaln7/klein/alias/memorable"
 	"github.com/kamaln7/klein/auth"
 	"github.com/kamaln7/klein/auth/httpbasic"
@@ -182,6 +183,10 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				logger.Fatalf("could not select alphanumeric alias: %s\n", err.Error())
 			}
+		case "emoji":
+			aliasProvider = emoji.New(&emoji.Config{
+				Length: viper.GetInt("alias.emoji.length"),
+			})
 		case "memorable":
 			aliasProvider = memorable.New(&memorable.Config{
 				Length: viper.GetInt("alias.memorable.length"),
@@ -223,11 +228,13 @@ func init() {
 	rootCmd.PersistentFlags().String("root", "", "root redirect")
 
 	// Alias options
-	rootCmd.PersistentFlags().String("alias.driver", "alphanumeric", "what alias generation to use (alphanumeric, memorable)")
+	rootCmd.PersistentFlags().String("alias.driver", "alphanumeric", "what alias generation to use (alphanumeric, emoji, memorable)")
 
 	rootCmd.PersistentFlags().Int("alias.alphanumeric.length", 5, "alphanumeric code length")
 	rootCmd.PersistentFlags().Bool("alias.alphanumeric.alpha", true, "use letters in code")
 	rootCmd.PersistentFlags().Bool("alias.alphanumeric.num", true, "use numbers in code")
+
+	rootCmd.PersistentFlags().Int("alias.emoji.length", 6, "emoji count")
 
 	rootCmd.PersistentFlags().Int("alias.memorable.length", 3, "memorable word count")
 
