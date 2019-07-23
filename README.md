@@ -132,8 +132,7 @@ Don't forget to add your config to the `ExecStart` line and update `User` and `G
 
 ## Development
 
-To manage dependencies, we use [dep](https://github.com/golang/dep).
-To install dependencies for this project, install dep, and then run `dep ensure` in this workspace.
+To manage dependencies, we use [Go modules](https://blog.golang.org/using-go-modules).
 
 To build the app, run `go build`.  
 This will produce a binary named `klein`. You can now run the app by running `./klein`
