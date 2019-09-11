@@ -4,6 +4,10 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - -s -w -X "github.com/kamaln7/klein/cmd.Version={{.Version}}"
+    goos:
+      - linux
+      - darwin
+      - windows
 archive:
   replacements:
     darwin: Darwin
