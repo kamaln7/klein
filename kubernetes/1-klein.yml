@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: klein
+spec:
+  selector:
+    matchLabels:
+      name: klein
+      type: www
+  template:
+    metadata:
+      labels:
+        name: klein
+        type: www
+    spec:
+      containers:
+        - name: klein
+          image: kamaln7/klein:3-latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: KLEIN_LISTEN
+              value: ":80"
+          envFrom:
+            - configMapRef:
+                name: klein-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: klein
+  labels:
+    name: klein
+    type: www
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    name: klein
+    type: www
