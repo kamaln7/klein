@@ -137,7 +137,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 
 		if exists {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("code already exists"))
+			w.Write([]byte("alias already exists"))
 			return
 		}
 	}
