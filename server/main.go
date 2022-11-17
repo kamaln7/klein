@@ -115,6 +115,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 
 	// set an alias
 	alias := r.FormValue("alias")
+	overwrite := r.FormValue("overwrite")
 	if alias == "" {
 		exists := true
 		for exists {
@@ -135,7 +136,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if exists {
+		if exists && overwrite != "true" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("alias already exists"))
 			return
@@ -143,7 +144,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// store the URL
-	err = b.Config.Storage.Store(url, alias)
+	err = b.Config.Storage.Store(url, alias, overwrite)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
