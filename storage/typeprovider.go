@@ -8,7 +8,7 @@ import (
 type Provider interface {
 	Get(alias string) (string, error)
 	Exists(alias string) (bool, error)
-	Store(url, alias string, overwrite string) error
+	Store(url, alias string, overwrite bool) error
 }
 
 // Errors
