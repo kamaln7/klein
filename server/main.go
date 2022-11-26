@@ -136,7 +136,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if exists && overwrite != "true" {
+		if exists && overwrite != true {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("alias already exists"))
 			return
