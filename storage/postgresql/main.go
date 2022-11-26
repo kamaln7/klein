@@ -139,11 +139,11 @@ func (p *Provider) Exists(alias string) (bool, error) {
 }
 
 // Store creates a new short URL
-func (p *Provider) Store(url, alias string, overwrite string) error {
+func (p *Provider) Store(url, alias string, overwrite bool) error {
 	q := p.fillInTableName("insert into %s (url, alias) values ($1, $2)")
 	_, err := p.db.Exec(q, url, alias)
 
-	if err, ok := err.(*pgx.PgError); ok && err.Code == "23505" {
+	if err, ok := err.(*pgx.PgError); ok && err.Code == "23505" && !overwrite {
 		return storage.ErrAlreadyExists
 	}
 
