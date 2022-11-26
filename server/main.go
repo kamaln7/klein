@@ -115,7 +115,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 
 	// set an alias
 	alias := r.FormValue("alias")
-	overwrite := r.FormValue("overwrite")
+	overwrite := r.FormValue("overwrite") == "true"
 	if alias == "" {
 		exists := true
 		for exists {
