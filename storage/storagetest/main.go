@@ -12,7 +12,7 @@ func RunBasicTests(p storage.Provider, t *testing.T) {
 
 	url := "http://example.com"
 	alias := "example"
-	overwrite := "example"
+	overwrite := true
 
 	t.Run("store new url", func(t *testing.T) {
 		err = p.Store(url, alias, overwrite)
