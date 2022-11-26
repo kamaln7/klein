@@ -12,9 +12,10 @@ func RunBasicTests(p storage.Provider, t *testing.T) {
 
 	url := "http://example.com"
 	alias := "example"
+	overwrite := true
 
 	t.Run("store new url", func(t *testing.T) {
-		err = p.Store(url, alias)
+		err = p.Store(url, alias, overwrite)
 		if err != nil {
 			t.Error("couldn't store a new URL")
 		}
@@ -32,7 +33,7 @@ func RunBasicTests(p storage.Provider, t *testing.T) {
 	})
 
 	t.Run("attempt to overwrite existing alias", func(t *testing.T) {
-		err = p.Store(url, alias)
+		err = p.Store(url, alias, overwrite)
 		if err != storage.ErrAlreadyExists {
 			t.Error("couldn't handle storing a new URL with an existing alias properly")
 		}

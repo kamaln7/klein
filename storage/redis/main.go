@@ -95,12 +95,12 @@ func (p *Provider) Exists(alias string) (bool, error) {
 }
 
 // Store creates a new short URL
-func (p *Provider) Store(url, alias string) error {
+func (p *Provider) Store(url, alias string, overwrite bool) error {
 	exists, err := p.Exists(alias)
 	if err != nil {
 		return err
 	}
-	if exists {
+	if exists && !overwrite {
 		return storage.ErrAlreadyExists
 	}
 

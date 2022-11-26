@@ -8,11 +8,11 @@ import (
 type Provider interface {
 	Get(alias string) (string, error)
 	Exists(alias string) (bool, error)
-	Store(url, alias string) error
+	Store(url, alias string, overwrite bool) error
 }
 
 // Errors
 var (
 	ErrNotFound      = errors.New("URL does not exist")
-	ErrAlreadyExists = errors.New("Alias already exists")
+	ErrAlreadyExists = errors.New("alias already exists")
 )
