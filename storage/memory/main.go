@@ -44,9 +44,9 @@ func (p *Provider) Exists(alias string) (bool, error) {
 }
 
 // Store creates a new short URL
-func (p *Provider) Store(url, alias string, overwrite string) error {
+func (p *Provider) Store(url, alias string, overwrite bool) error {
 	_, found := p.urls[alias]
-	if found && overwrite != "true" {
+	if found && !overwrite {
 		return storage.ErrAlreadyExists
 	}
 
