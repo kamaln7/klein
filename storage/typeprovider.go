@@ -15,5 +15,5 @@ type Provider interface {
 // Errors
 var (
 	ErrNotFound      = errors.New("URL does not exist")
-	ErrAlreadyExists = errors.New("Alias already exists")
+	ErrAlreadyExists = errors.New("alias already exists")
 )
