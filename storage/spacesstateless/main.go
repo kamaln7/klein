@@ -155,3 +155,22 @@ func (p *Provider) Store(url, alias string) error {
 	}
 	return nil
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	exists, err := p.Exists(alias)
+	if err != nil {
+		return err
+	}
+	if exists {
+		object := s3.DeleteObjectInput{
+			Bucket: aws.String(p.Config.Space),
+			Key:    aws.String(p.aliasFullPath(alias)),
+		}
+		_, err = p.spaces.DeleteObject(&object)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

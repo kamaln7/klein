@@ -53,3 +53,11 @@ func (p *Provider) Store(url, alias string) error {
 	p.urls[alias] = url
 	return nil
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	_, found := p.urls[alias]
+	if found {
+		delete(p.urls, alias)
+	}
+	return nil
+}

@@ -9,6 +9,7 @@ type Provider interface {
 	Get(alias string) (string, error)
 	Exists(alias string) (bool, error)
 	Store(url, alias string) error
+	DeleteURL(alias string) error
 }
 
 // Errors

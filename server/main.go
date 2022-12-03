@@ -64,8 +64,12 @@ func (b *Klein) httpHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		return
-	}
 
+	}
+	if r.Method == "DELETE" {
+		b.deleteURL(w, r)
+		return
+	}
 	b.redirect(w, r, path[1:])
 }
 
@@ -123,7 +127,7 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("error"))
+				w.Write([]byte("error: no alias provided"))
 				return
 			}
 		}
@@ -151,6 +155,43 @@ func (b *Klein) create(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(b.Config.PublicURL + alias))
+}
+
+func (b *Klein) deleteURL(w http.ResponseWriter, r *http.Request) {
+	var (
+		err error
+	)
+	url := r.URL.Path
+	alias := strings.TrimPrefix(url, "/")
+
+	// authenticate
+	authed, err := b.Config.Auth.Authenticate(w, r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error"))
+		return
+	}
+	if !authed {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("unauthenticated"))
+		return
+	}
+
+	// validate input
+	if alias == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("you need to pass a url"))
+		return
+	}
+
+	// delete the URL
+	err = b.Config.Storage.DeleteURL(alias)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write([]byte(alias + " was deleted"))
 }
 
 func (b *Klein) notFound(w http.ResponseWriter, r *http.Request) {

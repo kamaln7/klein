@@ -127,3 +127,28 @@ func (p *Provider) Store(url, alias string) error {
 
 	return nil
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	exists, _ := p.Exists(alias)
+
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	if exists {
+		delete(p.URLs, alias)
+		body, err := json.Marshal(p.URLs)
+		if err != nil {
+			return err
+		}
+		object := s3.PutObjectInput{
+			Body:   bytes.NewReader(body),
+			Bucket: aws.String(p.Config.Space),
+			Key:    aws.String(p.Config.Path),
+		}
+		_, err = p.Spaces.PutObject(&object)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

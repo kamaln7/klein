@@ -27,6 +27,7 @@ var _ storage.Provider = new(Provider)
 
 // New returns a new Provider instance
 func New(c *Config) *Provider {
+	os.MkdirAll(c.Path, os.ModePerm)
 	return &Provider{
 		Config: c,
 	}
@@ -70,5 +71,16 @@ func (p *Provider) Store(url, alias string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (p *Provider) DeleteURL(alias string) error {
+	exists, _ := p.Exists(alias)
+	if exists {
+		err := os.Remove(filepath.Join(p.Config.Path, alias))
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
