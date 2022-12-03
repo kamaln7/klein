@@ -32,7 +32,7 @@ klein has three core components that are abstracted into drivers to allow differ
 
 ## Usage
 
-Once installed and configured, there are two actions that you can do:
+Once installed and configured, there are three actions that you can do:
 
 1. Shorten a URL:
    - Send a POST request to `/` with the following two fields:
@@ -43,6 +43,8 @@ Once installed and configured, there are two actions that you can do:
      - This will create a short URL at `http://localhost:5556/klein_gh` that redirects to `http://github.com/kamaln7/klein`.
 2. Look up a URL/serve a redirect:
    - Browse to `http://[path to klein]/[alias]` to access a short URL.
+3. Delete a URL:
+   - Example cURL command: `curl -X DELETE http://localhost:5556/klein_gh`
 
 ## Installation
 
