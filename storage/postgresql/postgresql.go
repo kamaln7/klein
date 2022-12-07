@@ -149,3 +149,12 @@ func (p *Provider) Store(url, alias string) error {
 
 	return err
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	q := p.fillInTableName("DELETE FROM %s WHERE alias = $1")
+	_, err := p.db.Exec(q, alias)
+	if err != nil {
+		return err
+	}
+	return nil
+}

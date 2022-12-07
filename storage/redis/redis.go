@@ -107,3 +107,15 @@ func (p *Provider) Store(url, alias string) error {
 	r := p.pool.Cmd("SET", alias, url)
 	return r.Err
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	exists, err := p.Exists(alias)
+	if err != nil {
+		return err
+	}
+	if exists {
+		r := p.pool.Cmd("DEL", alias)
+		return r.Err
+	}
+	return nil
+}

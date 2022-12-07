@@ -9,10 +9,11 @@ type Provider interface {
 	Get(alias string) (string, error)
 	Exists(alias string) (bool, error)
 	Store(url, alias string) error
+	DeleteURL(alias string) error
 }
 
 // Errors
 var (
 	ErrNotFound      = errors.New("URL does not exist")
-	ErrAlreadyExists = errors.New("Alias already exists")
+	ErrAlreadyExists = errors.New("alias already exists")
 )

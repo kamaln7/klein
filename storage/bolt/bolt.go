@@ -106,3 +106,18 @@ func (p *Provider) Store(url, alias string) error {
 
 	return err
 }
+
+func (p *Provider) DeleteURL(alias string) error {
+	exists, err := p.Exists(alias)
+	if err != nil {
+		return err
+	}
+	if exists {
+		err = p.db.Update(func(tx *bolt.Tx) error {
+			b := tx.Bucket([]byte("klein"))
+			b.Delete([]byte(alias))
+			return err
+		})
+	}
+	return nil
+}
