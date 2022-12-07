@@ -75,7 +75,10 @@ func (p *Provider) Store(url, alias string) error {
 }
 
 func (p *Provider) DeleteURL(alias string) error {
-	exists, _ := p.Exists(alias)
+	exists, err := p.Exists(alias)
+	if err != nil {
+		return fmt.Errorf("checking if alias exists: %v", err)
+	}
 	if exists {
 		err := os.Remove(filepath.Join(p.Config.Path, alias))
 		if err != nil {
